@@ -24,9 +24,10 @@ public class CouponDao{
 	/**
 	 * Sending a query to the DB to add a new coupon to the coupon table.
 	 * @param coupon - the coupon as a Coupon object to add to the DB.
-	 * @throws ApplicationException.
+	 * @return Long of the ID of the created coupon.
+	 * @throws ApplicationException
 	 */
-	public void createCoupon(Coupon coupon) throws ApplicationException {
+	public Long createCoupon(Coupon coupon) throws ApplicationException {
 
 		PreparedStatement preparedStatement = null;
 		Connection connection = null;
@@ -37,7 +38,7 @@ public class CouponDao{
 			
 			// Creating a string which will contain the query.
 			String sql = "insert into coupon_system.coupon (CouponTitle, CouponStartDate, CouponEndDate, CouponAmount, CouponType, CouponMessage, CouponPrice, CouponImage, companyID) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			preparedStatement= connection.prepareStatement(sql);
+			preparedStatement= connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 
 			preparedStatement.setString	(1, coupon.getCouponTitle()			);
 			preparedStatement.setString	(2, coupon.getCouponStartDate()		);
@@ -53,6 +54,11 @@ public class CouponDao{
 			System.out.println(preparedStatement); // Checking the query sent to the server
 
 			preparedStatement.executeUpdate();
+			ResultSet resultSet = preparedStatement.getGeneratedKeys();
+			if(resultSet.next()) {
+				return resultSet.getLong(1);
+			}
+			return null;
 		} 
 
 		catch (SQLException e) {
@@ -124,7 +130,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getAllCoupons() throws ApplicationException{
 		
-		List<Coupon> coupons = new ArrayList<Coupon>();
+		List<Coupon> coupons = new ArrayList<>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -205,7 +211,7 @@ public class CouponDao{
 	 * @param couponID - the couponID as a long to remove from the DB.
 	 * @throws ApplicationException 
 	 */
-	public void removeBoughtCouponByID(Long couponID) throws ApplicationException {
+	public void removeBoughtCouponByCouponIDandCustomerID(Long couponID, Long customerID) throws ApplicationException {
 		
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -215,9 +221,10 @@ public class CouponDao{
 			connection = JdbcUtils.getConnection();
 			
 			// Creating a string which will contain the query.
-			String sql = "DELETE FROM customer_coupon WHERE CouponID = ?;";
+			String sql = "DELETE FROM customer_coupon WHERE CouponID = ? and CustomerID =?;";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, couponID);
+			preparedStatement.setLong(2, customerID);
 			// TODO delete print
 			System.out.println(preparedStatement); // Checking the query sent to the server
 			preparedStatement.executeUpdate();
@@ -236,39 +243,39 @@ public class CouponDao{
 		
 	}
 	
-	public void removeCustomerPurchasesByCustomerID(Long customerID) throws ApplicationException {
-		
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		
-		try {
-			// Getting a connection to the DB
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query
-			String sql = "DELETE FROM customer_coupon WHERE CustomerID = ?;";
-			preparedStatement = connection.prepareStatement(sql);
-			
-			preparedStatement.setLong(1, customerID);
-			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
-			
-			preparedStatement.executeUpdate();
-			
-			
-			
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-//				In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CustomerDao, removeCustomer(); FAILED");
-		}
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement);
-		}
-		
-	}
+//	public void removeCustomerPurchasesByCustomerID(Long customerID) throws ApplicationException {
+//		
+//		Connection connection = null;
+//		PreparedStatement preparedStatement = null;
+//		
+//		try {
+//			// Getting a connection to the DB
+//			connection = JdbcUtils.getConnection();
+//			
+//			// Creating a string which will contain the query
+//			String sql = "DELETE FROM customer_coupon WHERE CustomerID = ?;";
+//			preparedStatement = connection.prepareStatement(sql);
+//			
+//			preparedStatement.setLong(1, customerID);
+//			
+//			// TODO delete print
+//			System.out.println(preparedStatement); // Checking the query sent to the server
+//			
+//			preparedStatement.executeUpdate();
+//			
+//			
+//			
+//		}
+//		catch (SQLException e) {
+//			e.printStackTrace();
+////				In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
+//			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CustomerDao, removeCustomer(); FAILED");
+//		}
+//		finally {
+//			JdbcUtils.closeResources(connection, preparedStatement);
+//		}
+//		
+//	}
 	
 //	public void removeCouponByCompanyID(Long companyID) throws ApplicationException {
 //		
@@ -356,7 +363,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponByType(CouponType type) throws ApplicationException{
 		
-		List<Coupon> couponsByType = new ArrayList<Coupon>();
+		List<Coupon> couponsByType = new ArrayList<>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -404,7 +411,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponInOrderByPrice(OrderType orderType) throws ApplicationException{
 		
-		List<Coupon> couponsInOrderByPrice = new ArrayList<Coupon>();
+		List<Coupon> couponsInOrderByPrice = new ArrayList<>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -458,7 +465,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponsUpToPrice(double price) throws ApplicationException{
 		
-		List<Coupon> couponsUpToPrice = new ArrayList<Coupon>();
+		List<Coupon> couponsUpToPrice = new ArrayList<>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -502,14 +509,14 @@ public class CouponDao{
 	}
 	
 	/**
-	 * Sending a query to the DB to get all the coupons in coupon table up to requested date.
+	 * Sending a query to the DB to get all the coupons in coupon table up to requested expiration date.
 	 * @param endDate - String parameter of the latest end date of the coupon.
 	 * @return List collection of all the coupons in the coupon table up to the requested date.
 	 * @throws ApplicationException 
 	 */
 	public List<Coupon> getCouponsUpToEndDate(String endDate) throws ApplicationException{
 		
-		List<Coupon> couponsUpToPrice = new ArrayList<Coupon>();
+		List<Coupon> couponsUpToPrice = new ArrayList<>();
 		
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -561,7 +568,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponsByCompanyID(Long companyID) throws ApplicationException{
 		
-		List<Coupon> couponsByCompany = new ArrayList<Coupon>();
+		List<Coupon> couponsByCompany = new ArrayList<>();
 		
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -611,7 +618,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponsByCustomerID(Long customerID) throws ApplicationException{
 		
-		List<Coupon> couponsByCustomer = new ArrayList<Coupon>();
+		List<Coupon> couponsByCustomer = new ArrayList<>();
 		
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -815,7 +822,13 @@ public class CouponDao{
 		
 	}
 
-	
+	/**
+	 * Sending a query to the DB to get if there is a coupon using that title for creation.
+	 * @param couponTitle - String of that coupon tile.
+	 * @return true - Title in use by other coupon.
+	 * 		   false - Title not in use by other coupon.
+	 * @throws ApplicationException
+	 */
 	public boolean isCouponExistByTitle(String couponTitle) throws ApplicationException {
 		
 		Connection connection = null;
@@ -854,7 +867,14 @@ public class CouponDao{
 		}
 	}
 	
-
+	/**
+	 * Sending a query to the DB to get if there is a coupon using that title for update.
+	 * @param couponID - a long parameter represent the ID of the requested company.
+	 * @param couponTitle - String of that coupon tile.
+	 * @return true - Title in use by other coupon.
+	 * 		   false - Title not in use by other coupon.
+	 * @throws ApplicationException
+	 */
 	public boolean isCouponTitleExistForUpdate(Long couponID, String couponTitle) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -893,6 +913,14 @@ public class CouponDao{
 		}
 	}
 	
+	/**
+	 * Sending a query to the DB to get if the customer already purchased the coupon.
+	 * @param couponID - a long parameter represent the ID of the requested coupon.
+	 * @param customerID - a long parameter represent the ID of the requested customer.
+	 * @return true - customer already purchased the coupon.
+	 * 		   false - customer didn't purchased the coupon..
+	 * @throws ApplicationException
+	 */
 	public boolean isCouponAlreadyPurchasedByCustomerID(Long couponID, Long customerID) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -950,7 +978,7 @@ public class CouponDao{
 		coupon.setCouponMessage(resultSet.getString("CouponMessage"));
 		coupon.setCouponPrice(resultSet.getDouble("CouponPrice"));
 		coupon.setCouponImage(resultSet.getString("CouponImage"));
-		coupon.setCompanyID(resultSet.getInt("companyID"));
+		coupon.setCompanyID(resultSet.getLong("companyID"));
 		
 		return coupon;
 	}

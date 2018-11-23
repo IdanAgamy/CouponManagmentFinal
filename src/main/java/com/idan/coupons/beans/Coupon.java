@@ -1,78 +1,14 @@
 package com.idan.coupons.beans;
 
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.idan.coupons.enums.CouponType;
 
+@XmlRootElement
 public class Coupon{
 	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (companyID ^ (companyID >>> 32));
-		result = prime * result + couponAmount;
-		result = prime * result + ((couponEndDate == null) ? 0 : couponEndDate.hashCode());
-		result = prime * result + (int) (couponId ^ (couponId >>> 32));
-		result = prime * result + ((couponImage == null) ? 0 : couponImage.hashCode());
-		result = prime * result + ((couponMessage == null) ? 0 : couponMessage.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(couponPrice);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((couponStartDate == null) ? 0 : couponStartDate.hashCode());
-		result = prime * result + ((couponTitle == null) ? 0 : couponTitle.hashCode());
-		result = prime * result + ((couponType == null) ? 0 : couponType.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Coupon other = (Coupon) obj;
-		if (companyID != other.companyID)
-			return false;
-		if (couponAmount != other.couponAmount)
-			return false;
-		if (couponEndDate == null) {
-			if (other.couponEndDate != null)
-				return false;
-		} else if (!couponEndDate.equals(other.couponEndDate))
-			return false;
-		if (couponId != other.couponId)
-			return false;
-		if (couponImage == null) {
-			if (other.couponImage != null)
-				return false;
-		} else if (!couponImage.equals(other.couponImage))
-			return false;
-		if (couponMessage == null) {
-			if (other.couponMessage != null)
-				return false;
-		} else if (!couponMessage.equals(other.couponMessage))
-			return false;
-		if (Double.doubleToLongBits(couponPrice) != Double.doubleToLongBits(other.couponPrice))
-			return false;
-		if (couponStartDate == null) {
-			if (other.couponStartDate != null)
-				return false;
-		} else if (!couponStartDate.equals(other.couponStartDate))
-			return false;
-		if (couponTitle == null) {
-			if (other.couponTitle != null)
-				return false;
-		} else if (!couponTitle.equals(other.couponTitle))
-			return false;
-		if (couponType != other.couponType)
-			return false;
-		return true;
-	}
-
-
-
-	private long couponId;
+	private Long couponId;
 	private String couponTitle;
 	private String couponStartDate; //yyyy-mm-dd
 	private String couponEndDate;	//yyyy-mm-dd
@@ -81,12 +17,12 @@ public class Coupon{
 	private String couponMessage;
 	private double couponPrice;
 	private String couponImage;
-	private long companyID;
+	private Long companyID;
 	
-	public long getCouponId() {
+	public Long getCouponId() {
 		return couponId;
 	}
-	public void setCouponId(long couponId) {
+	public void setCouponId(Long couponId) {
 		this.couponId = couponId;
 	}
 	public String getCouponTitle() {
@@ -141,10 +77,10 @@ public class Coupon{
 		this.couponImage = couponImage;
 	}
 	
-	public long getCompanyID() {
+	public Long getCompanyID() {
 		return companyID;
 	}
-	public void setCompanyID(long companyID) {
+	public void setCompanyID(Long companyID) {
 		this.companyID = companyID;
 	}
 	
@@ -155,7 +91,7 @@ public class Coupon{
 	
 	
 	public Coupon(String couponTitle, String couponStartDate, String couponEndDate, int couponAmount,
-			CouponType couponType, String couponMessage, double couponPrice, String couponImage, long companyID) {
+			CouponType couponType, String couponMessage, double couponPrice, String couponImage, Long companyID) {
 		super();
 		this.couponTitle = couponTitle;
 		this.couponStartDate = couponStartDate;
@@ -169,8 +105,8 @@ public class Coupon{
 	}
 	
 	
-	public Coupon(long couponId, String couponTitle, String couponStartDate, String couponEndDate, int couponAmount,
-			CouponType couponType, String couponMessage, double couponPrice, String couponImage, long companyID) {
+	public Coupon(Long couponId, String couponTitle, String couponStartDate, String couponEndDate, int couponAmount,
+			CouponType couponType, String couponMessage, double couponPrice, String couponImage, Long companyID) {
 		super();
 		this.couponId = couponId;
 		this.couponTitle = couponTitle;

@@ -21,7 +21,7 @@ public class JdbcUtils {
 	
 
 	public static Connection getConnection() throws SQLException {
-		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/coupon_system?autoReconnect=true&useSSL=false&allowMultiQueries=true", strUser, strPassword);
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/coupon_system?autoReconnect=true&useSSL=false&allowMultiQueries=true&serverTimezone=UTC", strUser, strPassword);
 		return connection;
 	}
 

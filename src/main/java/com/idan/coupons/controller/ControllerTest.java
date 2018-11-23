@@ -1,13 +1,12 @@
 package com.idan.coupons.controller;
 
-import java.io.IOException;
+//import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ConcurrentModificationException;
-import java.util.List;
+//import java.util.List;
 
-import com.idan.coupons.dao.CompanyDao;
+//import com.idan.coupons.dao.CompanyDao;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.JdbcUtils;
@@ -20,8 +19,8 @@ public class ControllerTest {
 		
 
 		couponControllerTest();
-//		companyControllerTest();
-//		customernControllerTest();
+		companyControllerTest();
+		customernControllerTest();
 		
 		resetAllAI();
 		conection.close();
@@ -51,55 +50,68 @@ public class ControllerTest {
 		
 	}
 
-	private static void createCouponTest(CompanyController cc) {
-		
-	}
+//	private static void createCouponTest(CompanyController cc) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 	private static void getCouponByCouponIdTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void getAllCouponsTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void removeCouponByIDTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void updateCouponTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void getCouponByTypeTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void getCouponInOrderByPriceTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void getCouponsUpToPriceTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void getCouponsUpToEndDateTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void getCouponsByCompanyIDTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void getCouponsByCustomerIDTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void buyCouponTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	private static void getCouponLeftInStockByCouponIDTest() {
+		// TODO Auto-generated method stub
 		
 	}
 
@@ -108,19 +120,16 @@ public class ControllerTest {
 		try {
 			cc.deleteExpiredCoupon();
 		} catch (ApplicationException e) {
-			// 
 			e.printStackTrace();
 		}
 		
 	}
 
 	private static void companyControllerTest() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	private static void customernControllerTest() {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -243,15 +252,15 @@ private static void resetCouponAI() throws ApplicationException {
 		resetCustomerCouponAI();
 		System.out.println("reseting all AI");
 	}
-	private static <T> void printList(List<T> list) {
-		for(T c: list) {
-			System.out.println(c);
-		}
-	}
-	
-	private static void verify(String message) throws IOException {
-		System.out.println(message);
-		System.in.read();
-	}
+//	private static <T> void printList(List<T> list) {
+//		for(T c: list) {
+//			System.out.println(c);
+//		}
+//	}
+//	
+//	private static void verify(String message) throws IOException {
+//		System.out.println(message);
+//		System.in.read();
+//	}
 
 }

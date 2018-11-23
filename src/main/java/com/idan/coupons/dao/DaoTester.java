@@ -23,9 +23,9 @@ public class DaoTester {
 		Thread.sleep(3000);
 		
 		
-		companyTest();
+//		companyTest();
 		couponTest();
-		customerTest();
+//		customerTest();
 		
 		
 		resetAllAI();
@@ -37,27 +37,27 @@ public class DaoTester {
 		CouponDao cd = new CouponDao();
 		System.out.println("**********Testing couponDao************");
 		
-		createCouponTest(cd);
-		updateCouponTest(cd);
-		removeCouponByIDTest(cd);
-		buyCouponTest(cd);
+//		createCouponTest(cd);
+//		updateCouponTest(cd);
+//		removeCouponByIDTest(cd);
+//		buyCouponTest(cd);
 		getCouponByCouponIdTest(cd);
-		getAllCouponsTest(cd);
-		removeBoughtCouponByIDTest(cd);
-		removeCustomerPurchasesByCustomerIDTest(cd);
+//		getAllCouponsTest(cd);
+//		removeBoughtCouponByIDTest(cd);
+//		removeCustomerPurchasesByCustomerIDTest(cd);
 //		removeCouponByCompanyIDTest(cd);
-		getCouponByTypeTest(cd);
-		getCouponInOrderByPriceTest(cd);
-		getCouponsUpToPriceTest(cd);
-		getCouponsUpToEndDateTest(cd);
-		getCouponsByCompanyIDTest(cd);
-		getCouponsByCustomerIDTest(cd);
+//		getCouponByTypeTest(cd);
+//		getCouponInOrderByPriceTest(cd);
+//		getCouponsUpToPriceTest(cd);
+//		getCouponsUpToEndDateTest(cd);
+//		getCouponsByCompanyIDTest(cd);
+//		getCouponsByCustomerIDTest(cd);
 //		getCouponAmountByCouponIDTest(cd);
 //		getBoughtCouponCountByCouponIDTest(cd);
 //		getCouponIDsByEndDateTest(cd);
-		isCouponExistByTitleTest(cd);
-		isCouponTitleExistForUpdateTest(cd);
-		isCouponAlreadyPurchasedByCustomerIDTest(cd);
+//		isCouponExistByTitleTest(cd);
+//		isCouponTitleExistForUpdateTest(cd);
+//		isCouponAlreadyPurchasedByCustomerIDTest(cd);
 		
 	}
 	
@@ -97,7 +97,7 @@ public class DaoTester {
 		
 		System.out.println("**********Testing create Coupon************");
 		try {
-			cd.createCoupon(new Coupon("a title", "2012-09-05", "2017-09-05", 10, CouponType.Food, "bird is the word", 30.3, "dicpic", 2));
+			cd.createCoupon(new Coupon("a title", "2012-09-05", "2017-09-05", 10, CouponType.Food, "bird is the word", 30.3, "dicpic", 2L));
 		} catch (ApplicationException e) {
 			// 
 			e.printStackTrace();
@@ -163,7 +163,7 @@ public class DaoTester {
 		System.out.println("**********Testing remove Bought Coupon By ID************");
 		
 		try {
-			cd.removeBoughtCouponByID(3l);
+			cd.removeBoughtCouponByCouponIDandCustomerID(3l, 3l);
 		} catch (ApplicationException e) {
 			// 
 			e.printStackTrace();
@@ -178,25 +178,25 @@ public class DaoTester {
 		
 	}
 	
-	private static void removeCustomerPurchasesByCustomerIDTest(CouponDao cd) {
-		System.out.println("**********Testing remove Customer Purchases By Customer ID************");
-		buyCouponTest(cd);
-		
-		try {
-			cd.removeCustomerPurchasesByCustomerID(3l);
-		} catch (ApplicationException e) {
-			// 
-			e.printStackTrace();
-		}
-		
-		try {
-			verify("press enter after checking mysql");
-		} catch (IOException e) {
-			// 
-			e.printStackTrace();
-		}
-		
-	}
+//	private static void removeCustomerPurchasesByCustomerIDTest(CouponDao cd) {
+//		System.out.println("**********Testing remove Customer Purchases By Customer ID************");
+//		buyCouponTest(cd);
+//		
+//		try {
+//			cd.removeCustomerPurchasesByCustomerID(3l);
+//		} catch (ApplicationException e) {
+//			// 
+//			e.printStackTrace();
+//		}
+//		
+//		try {
+//			verify("press enter after checking mysql");
+//		} catch (IOException e) {
+//			// 
+//			e.printStackTrace();
+//		}
+//		
+//	}
 	
 //	private static void removeCouponByCompanyIDTest(CouponDao cd) {
 //		System.out.println("**********Testing remove Coupon By Company ID************");
@@ -225,7 +225,7 @@ public class DaoTester {
 	private static void updateCouponTest(CouponDao cd) {
 		System.out.println("**********Testing update Coupon************");
 		try {
-			cd.updateCoupon(new Coupon(9l, "another tite", "2018-09-05", "2018-09-06", 11, CouponType.Holiday, "bird is the word", 31.3, "dicpic", 1));
+			cd.updateCoupon(new Coupon(9l, "another tite", "2018-09-05", "2018-09-06", 11, CouponType.Holiday, "bird is the word", 31.3, "dicpic", 1l));
 		} catch (ApplicationException e) {
 			// 
 			e.printStackTrace();
@@ -443,9 +443,9 @@ public class DaoTester {
 //		createCompanyTest(cd);
 		
 		try {
-//			verify("check for new coupon");
-			cd.updateCompany(new Company(9, "Meister Inc", "654shlomp", "something@meister.com"));
-		} catch (ApplicationException e) {
+			verify("check for new coupon");
+			cd.updateCompany(new Company(9l, "Meister Inc", "654shlomp", "something@meister.com"));
+		} catch (ApplicationException | IOException e) {
 			
 			e.printStackTrace();
 		}
@@ -564,9 +564,9 @@ public class DaoTester {
 		createCustomerTest(cd);
 		
 		try {
-//			verify("Check db");
-			cd.updateCustomer(new Customer(4, "Karl", "sdsdsdsd", "asd@asd"));
-		} catch ( ApplicationException e) {
+			verify("Check db");
+			cd.updateCustomer(new Customer(4L, "Karl", "sdsdsdsd", "asd@asd"));
+		} catch (IOException | ApplicationException e) {
 			e.printStackTrace();
 		}
 		

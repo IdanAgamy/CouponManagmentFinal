@@ -1,16 +1,19 @@
 package com.idan.coupons.beans;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Company{
 	
-	private long companyId;
+	private Long companyId;
 	private String companyName;
 	private String companyPassword ;
 	private String companyEmail;
 	
-	public long getCompanyId() {
+	public Long getCompanyId() {
 		return companyId;
 	}
-	public void setCompanyId(long companyId) {
+	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
 	}
 	public String getCompanyName() {
@@ -40,7 +43,7 @@ public class Company{
 		this.companyPassword = companyPassword;
 		this.companyEmail = companyEmail;
 	}
-	public Company(long companyId, String companyName, String companyPassword, String companyEmail) {
+	public Company(Long companyId, String companyName, String companyPassword, String companyEmail) {
 		this( companyName,  companyPassword,  companyEmail);
 		this.companyId = companyId;
 	}

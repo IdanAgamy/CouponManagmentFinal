@@ -22,7 +22,8 @@ public class CompanyDao{
 	/**
 	 * Sending a query to the DB to add a new company to the company table.
 	 * @param company - the company as a Company object to add to the DB.
-	 * @throws ApplicationException. 
+	 * @return Long of the ID of the created company.
+	 * @throws ApplicationException
 	 */
 	public Long createCompany(Company company) throws ApplicationException {
 
@@ -37,7 +38,7 @@ public class CompanyDao{
 			
 			// Creating a string which will contain the query.
 			String sql = "insert into company (CompanyName, CompanyPassword, CompanyEMail) values (?,?,?)";
-			preparedStatement= connection.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+			preparedStatement= connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 			
 			// Switching the question marks with the input from the user.
 			preparedStatement.setString(1, company.getCompanyName());
@@ -224,7 +225,116 @@ public class CompanyDao{
 		
 	}
 	
-	
+	/**
+	 * Sending a query to the DB to get information of a company by name.
+	 * @param companyName - a String parameter represent the name of the requested company.
+	 * @return Company object of the requested company.
+	 * @throws ApplicationException
+	 */
+	public Company getCompanyByComapnyName(String companyName) throws ApplicationException {
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		Company company = null;
+
+		try {
+
+			// Getting a connection to the DB.
+			connection = JdbcUtils.getConnection();
+
+			// Creating a string which will contain the query.
+			String sql = "SELECT * FROM company WHERE companyName = ? ";
+			preparedStatement = connection.prepareStatement(sql);
+
+			preparedStatement.setString(1, companyName);
+			
+			// TODO delete print
+			System.out.println(preparedStatement); // Checking the query sent to the server
+
+			resultSet = preparedStatement.executeQuery();
+			
+			// Checking if we got a reply with the requested data. If no data was received, returns null.
+			if (!resultSet.next()) {
+				return null;
+			}
+			
+			company = extractCompanyFromResultSet(resultSet);
+
+		}
+
+		catch (SQLException e) {
+			
+			e.printStackTrace();
+
+			// In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
+			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getCompanyByComapnyName(); FAILED");
+		
+		}
+
+		finally {
+
+			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+		
+		}
+		
+		return company;
+	}
+
+	/**
+	 * Sending a query to the DB to get information of a company by Email.
+	 * @param companyEmail - a String parameter represent the e-mail of the requested company.
+	 * @return Company object of the requested company.
+	 * @throws ApplicationException
+	 */
+	public Company getCompanyByComapnyEmail(String companyEmail) throws ApplicationException {
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		Company company = null;
+
+		try {
+
+			// Getting a connection to the DB.
+			connection = JdbcUtils.getConnection();
+
+			// Creating a string which will contain the query.
+			String sql = "SELECT * FROM company WHERE companyEmail = ? ";
+			preparedStatement = connection.prepareStatement(sql);
+
+			preparedStatement.setString(1, companyEmail);
+			
+			// TODO delete print
+			System.out.println(preparedStatement); // Checking the query sent to the server
+
+			resultSet = preparedStatement.executeQuery();
+			
+			// Checking if we got a reply with the requested data. If no data was received, returns null.
+			if (!resultSet.next()) {
+				return null;
+			}
+			
+			company = extractCompanyFromResultSet(resultSet);
+
+		}
+
+		catch (SQLException e) {
+			
+			e.printStackTrace();
+
+			// In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
+			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in getCompanyByComapnyEmail, getCompanyByComapnyName(); FAILED");
+		
+		}
+
+		finally {
+
+			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+		
+		}
+		
+		return company;
+	}
+
 	/**
 	 * Sending a query to the DB to get all the companies in company table.
 	 * @return List collection of all the companies in the company table.
@@ -232,7 +342,7 @@ public class CompanyDao{
 	 */
 	public List<Company> getAllCompanies() throws ApplicationException{
 
-		List<Company> companies = new ArrayList<Company>();
+		List<Company> companies = new ArrayList<>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -282,18 +392,16 @@ public class CompanyDao{
 	 * Sending a query to the DB to get if there is a company with that password to approve login.
 	 * @param companyName - String of the company name.
 	 * @param companyPasword - String of that company password
-	 * @return true  - company and password match.
-	 * 		   false - company and password do not match.
+	 * @return The company object that fits the parameters.
 	 * @throws ApplicationException. 
 	 */
-	public boolean login (String companyName, String companyPasword) throws ApplicationException {
+	public Company login (String companyName, String companyPasword) throws ApplicationException {
 		
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 
 		try {
-
 			// Getting a connection to the DB.
 			connection = JdbcUtils.getConnection();
 
@@ -311,10 +419,12 @@ public class CompanyDao{
 			
 			// If no result was received, return false because there is no matching company name and company password
 			if (!resultSet.next()) {
-				return false;
+				return null;
 			}
 			
-			return true;
+			Company company = extractCompanyFromResultSet(resultSet);
+			
+			return company;
 			
 		}
 
@@ -331,6 +441,13 @@ public class CompanyDao{
 		
 	}
 	
+	/**
+	 * Sending a query to the DB to get if there is a company using that email for creation.
+	 * @param companyEmail - String of that company email.
+	 * @return true - Email in use by other company.
+	 * 		   false - Email not in use by other company.
+	 * @throws ApplicationException
+	 */
 	public boolean isCompanyExistByEmail(String companyEmail) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -368,6 +485,14 @@ public class CompanyDao{
 		}
 	}
 	
+	/**
+	 * Sending a query to the DB to get if there is a company using that email for update.
+	 * @param companyID - a long parameter represent the ID of the requested company.
+	 * @param companyEmail - String of that company email.
+	 * @return true - Email in use by other company.
+	 * 		   false - Email not in use by other company.
+	 * @throws ApplicationException
+	 */
 	public boolean isCompanyEmailExistForUpdate(Long companyID, String companyEmail) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -406,6 +531,13 @@ public class CompanyDao{
 		}
 	}
 	
+	/**
+	 * Sending a query to the DB to get if there is a company using that name for creation.
+	 * @param companyName - String of that company name.
+	 * @return true - Name in use by other company.
+	 * 		   false - Name not in use by other company.
+	 * @throws ApplicationException
+	 */
 	public boolean isCompanyExistByName(String companyName) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -443,6 +575,14 @@ public class CompanyDao{
 		}
 	}
 	
+	/**
+	 * Sending a query to the DB to get if there is a company using that name for creation.
+	 * @param companyID - a long parameter represent the ID of the requested company.
+	 * @param companyName - String of that company name.
+	 * @return true - Name in use by other company.
+	 * 		   false - Name not in use by other company.
+	 * @throws ApplicationException
+	 */
 	public boolean isCompanyNameExistForUpdate(long companyID, String companyName) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;

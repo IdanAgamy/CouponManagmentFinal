@@ -7,6 +7,8 @@ import java.sql.SQLException;
 //import java.util.ArrayList;
 //import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 
 import com.idan.coupons.beans.Customer;
 import com.idan.coupons.enums.ErrorType;
@@ -22,9 +24,10 @@ public class CustomerDao{
 	/**
 	 * Sending a query to the DB to add a new customer to the customer table.
 	 * @param customer - the customer as a Customer object to add to the DB
-	 * @throws ApplicationException 
+	 * @return Long of the ID of the created customer.
+	 * @throws ApplicationException
 	 */
-	public void createCustomer(Customer customer) throws ApplicationException {
+	public Long createCustomer(Customer customer) throws ApplicationException {
 
 		PreparedStatement preparedStatement = null;
 		Connection connection = null;
@@ -36,7 +39,7 @@ public class CustomerDao{
 			// Creating a string which will contain the query
 			String sql = "INSERT INTO customer (CustomerName, CustomerPassword, CustomerEmail) values (?, ?, ?)";
 
-			preparedStatement= connection.prepareStatement(sql);
+			preparedStatement= connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 			
 			preparedStatement.setString(1, customer.getCustomerName());
 			preparedStatement.setString(2, customer.getCustomerPassword());
@@ -46,6 +49,11 @@ public class CustomerDao{
 			System.out.println(preparedStatement); // Checking the query sent to the server
 			
 			preparedStatement.executeUpdate();
+			ResultSet resultSet = preparedStatement.getGeneratedKeys();
+			if(resultSet.next()) {
+				return resultSet.getLong(1);
+			}
+			return null;
 		} 
 
 		catch (SQLException e) {
@@ -196,6 +204,104 @@ public class CustomerDao{
 	}
 	
 	
+	/**
+	 * Sending a query to the DB to get information of customers by name.
+	 * @param customerName - a String parameter represent the name of the requested customers.
+	 * @return List of customer objects of the requested company.
+	 * @throws ApplicationException
+	 */
+	public List<Customer> getCustomersByCustomerName(String customerName) throws ApplicationException {
+		ArrayList<Customer> customers = new ArrayList<>();
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			// Getting a connection to the DB
+			connection = JdbcUtils.getConnection();
+			
+			// Creating a string which will contain the query
+			String sql = "SELECT * FROM Customer WHERE customerName = ?";
+			preparedStatement = connection.prepareStatement(sql);
+
+			preparedStatement.setString(1, customerName);
+			
+			// TODO delete print
+			System.out.println(preparedStatement); // Checking the query sent to the server
+			
+			resultSet = preparedStatement.executeQuery();
+
+			// Looping on the received result to add to a list of Customer objects.
+			while (resultSet.next()) {
+				customers.add(extractCustomerFromResultSet(resultSet));
+			}
+
+			
+		}
+
+		catch (SQLException e) {
+			e.printStackTrace();
+//			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
+			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + 
+					"Error in CustomerDao, getCustomersByCustomerName(); FAILED");
+			}
+
+		finally {
+			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+		}
+		
+		return customers;
+	}
+
+	/**
+	 * Sending a query to the DB to get information of a customer by Email.
+	 * @param customerEmail - a String parameter represent the e-mail of the requested customer.
+	 * @return Company object of the requested customer.
+	 * @throws ApplicationException
+	 */
+	public Customer getCustomerByCustomerEmail(String customerEmail) throws ApplicationException {
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		Customer customer = null;
+
+		try {
+			// Getting a connection to the DB
+			connection = JdbcUtils.getConnection();
+			
+			// Creating a string which will contain the query
+			String sql = "SELECT * FROM customer WHERE customerEmail = ? ";
+			preparedStatement = connection.prepareStatement(sql);
+			
+			preparedStatement.setString(1, customerEmail);
+			
+			// TODO delete print
+			System.out.println(preparedStatement); // Checking the query sent to the server
+			
+			resultSet = preparedStatement.executeQuery();
+
+			// Checking if we got a reply with the requested data. If no data was received, returns null.
+			if (!resultSet.next()) {
+				return null;
+			}
+			customer = extractCustomerFromResultSet(resultSet);
+
+			
+		}
+
+		catch (SQLException e) {
+			e.printStackTrace();
+//			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
+			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + 
+					"Error in CustomerDao, getCustomerByCustomerEmail(); FAILED");
+			}
+
+		finally {
+			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+		}
+		return customer;
+	}
+
 
 	/**
 	 * Sending a query to the DB to get all the customers in customer table.
@@ -204,7 +310,7 @@ public class CustomerDao{
 	 */
 	public ArrayList<Customer> getAllCustomers() throws ApplicationException{
 		
-		ArrayList<Customer> customers = new ArrayList<Customer>();
+		ArrayList<Customer> customers = new ArrayList<>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -248,11 +354,10 @@ public class CustomerDao{
 	 * Sending a query to the DB to get if there is a customer with that password to approve login.
 	 * @param customerName - String parameter of the customer name.
 	 * @param customerPasword - String parameter of that customer password
-	 * @return true  - password is correct.
-	 * 		   false - password is incorrect.
+	 * @return The customer object that fits the parameters.
 	 * @throws ApplicationException 
 	 */
-	public boolean login (String customerEmail, String customerPassword) throws ApplicationException {
+	public Customer login (String customerEmail, String customerPassword) throws ApplicationException {
 		
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -276,10 +381,12 @@ public class CustomerDao{
 			
 			// If no result was received, return false because there is no matching customer name and customer password
 			if (!resultSet.next()) {
-				return false;
+				return null;
 			}
 			
-			return true;
+			 Customer customer = extractCustomerFromResultSet(resultSet);
+			
+			return customer;
 			
 		}
 
@@ -295,8 +402,13 @@ public class CustomerDao{
 		
 	}
 	
-	
-	
+	/**
+	 * Sending a query to the DB to get if there is a customer using that email for creation.
+	 * @param customerEmail - String of that customer email.
+	 * @return true - Email in use by other customer.
+	 * 		   false - Email not in use by other customer.
+	 * @throws ApplicationException
+	 */
 	public boolean isCustomerExistByEmail(String customerEmail) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -334,6 +446,14 @@ public class CustomerDao{
 		}
 	}
 	
+	/**
+	 * Sending a query to the DB to get if there is a customer using that email for update.
+	 * @param customerID - a long parameter represent the ID of the requested customer.
+	 * @param customerEmail - String of that customer email.
+	 * @return true - Email in use by other customer.
+	 * 		   false - Email not in use by other customer.
+	 * @throws ApplicationException
+	 */
 	public boolean isCustomerEmailExistForUpdate(Long customerID, String customerEmail) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;

@@ -2,22 +2,15 @@ package com.idan.coupons.utils;
 
 import java.util.GregorianCalendar;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.idan.coupons.enums.ErrorType;
+import com.idan.coupons.enums.UserType;
+import com.idan.coupons.exceptions.ApplicationException;
+
 public class ValidationUtils {
 
-	public static final int couponTitleInputError = 1;
-	public static final int couponStartDateInputError = 2;
-	public static final int couponEndDateInputError = 4;
-	public static final int couponAmountInputError = 8;
-	public static final int couponMessageInputError = 16;
-	public static final int couponPriceInputError = 32;
-	public static final int couponStartEndDateMissInputError = 64;
-	public static final int couponStartAlreadyPassedInputError = 128;
-	public static final int companyNameInputError = 1;
-	public static final int companyPasswordDateInputError = 2;
-	public static final int companyEmailInputError = 4;
-	public static final int customerNameInputError = 1;
-	public static final int customerPasswordDateInputError = 2;
-	public static final int customerEmailInputError = 4;
+
 	
 	/**
 	 * This method if the provided date in the yyyy-mm-dd format.
@@ -60,7 +53,7 @@ public class ValidationUtils {
 		}
 		boolean isLeapYear = false;
 		
-		// For February doing a leap year test.
+		// For February doing a leap year check.
 		if(month == 2) {
 			if(year % 4 == 0)
 			{
@@ -276,6 +269,12 @@ public class ValidationUtils {
 		
 	}
 	
+	/**
+	 * Validating the relation of start date of a coupon and the end date.
+	 * @param couponStartDate - String of the start date
+	 * @param couponEndDate - String of the end date
+	 * @return if the start date of a coupon is after the end date.
+	 */
 	public static boolean isStartEndDateMiss(String couponStartDate, String couponEndDate) {
 
 		GregorianCalendar startDate = DateUtils.strToDateConverter(couponStartDate);
@@ -284,11 +283,60 @@ public class ValidationUtils {
 		return startDate.after(endDate);
 	}
 	
+	/**
+	 * Validating the start date.
+	 * @param couponStartDate - String of the start date
+	 * @return if the input of the start date already passed.
+	 */
 	public static boolean isStartDateAlreadyPassed(String couponStartDate) {
 
 		GregorianCalendar startDate = DateUtils.strToDateConverter(couponStartDate);
 		
 		return startDate.before(new GregorianCalendar());
+	}
+	
+	/**
+	 * Validating if the user can request an action.
+	 * @param request - the request from the client.
+	 * @param requestId - Id of the request.
+	 * @throws ApplicationException
+	 */
+	public static void ValidateUser(HttpServletRequest request, long requestId) throws ApplicationException {
+		String userType = (String) request.getAttribute("userType");
+		String userIDstr = (String) request.getAttribute("userID");
+		Long userID = null;
+		if(userIDstr == null || userType == null) {
+			throw new ApplicationException(ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime()
+					+" System error, problem with cookies.");
+		}
+
+		userID = Long.parseLong(userIDstr);
+
+		if ( !userType.equals(UserType.ADMIN.name()) || userID != requestId) {
+			throw new ApplicationException(ErrorType.UNAUTHORIZED_ACTION, DateUtils.getCurrentDateAndTime()
+					+" Unauthorized action.");
+		} 
+	}
+	
+
+
+	public static Long validateAndGetetCustomerID(HttpServletRequest request) throws ApplicationException {
+		String userType = (String) request.getAttribute("userType");
+		String userIDstr = (String) request.getAttribute("userID");
+		Long userID = null;
+
+		if(userType.equals(UserType.CUSTOMER.name())) {
+			throw new ApplicationException(ErrorType.UNAUTHORIZED_ACTION, DateUtils.getCurrentDateAndTime()
+					+" Unauthorized action.");
+		}
+
+		if(userIDstr == null) {
+			throw new ApplicationException(ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime()
+					+" System error, problem with cookies.");
+		}
+
+		userID = Long.valueOf(userIDstr);
+		return userID;
 	}
 	
 	

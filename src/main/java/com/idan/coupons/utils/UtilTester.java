@@ -5,17 +5,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+//import com.idan.coupons.beans.UserLoginInfo;
+//import com.idan.coupons.enums.UserType;
+import com.idan.coupons.exceptions.ApplicationException;
+
 public class UtilTester {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ApplicationException {
 		
 		DateUtilsTester();
 		ValidationUtilsTester();
+		LoginTester();
 		 
 		System.out.println("**********End of test************");
 		
 	}
 	
+	private static void LoginTester() throws ApplicationException {
+//		boolean ff = LoginUtils.login(new UserLoginInfo("BBB", "BBB@gmail.com", "1234BbBb", UserType.COMPANY));
+//		System.out.println(ff);
+	}
+
 	private static void DateUtilsTester() {
 		System.out.println("**********Testing DateUtils************");
 		
@@ -78,7 +88,7 @@ public class UtilTester {
 	
 	private static void isValidAmountTest() {
 		System.out.println("**********Testing is Valid Amount************");
-		Map<Integer,Boolean> checkList = new HashMap<Integer, Boolean>();
+		Map<Integer,Boolean> checkList = new HashMap<>();
 		
 		checkList.put(32, true);
 		checkList.put(-23, false);
@@ -102,7 +112,7 @@ public class UtilTester {
 
 	private static void isValidPriceTest() {
 		System.out.println("**********Testing is Valid Price************");
-		Map<Double,Boolean> checkList = new HashMap<Double, Boolean>();
+		Map<Double,Boolean> checkList = new HashMap<>();
 		
 		checkList.put(32.0, true);
 		checkList.put(-23.0, false);
@@ -129,7 +139,7 @@ public class UtilTester {
 		
 		
 		
-		Map<String,Boolean> checkList = new HashMap<String, Boolean>();
+		Map<String,Boolean> checkList = new HashMap<>();
 		
 		checkList.put("a-b", false);
 		checkList.put("2000-10-10", true);
@@ -166,7 +176,7 @@ public class UtilTester {
 
 	private static void isValidMessageFormatTest() {
 		System.out.println("**********Testing is Valid Message Format************");
-		Map<String,Boolean> checkList = new HashMap<String, Boolean>();
+		Map<String,Boolean> checkList = new HashMap<>();
 		
 		checkList.put("a@b", false);
 		checkList.put("lsjhbfglijrnvlidfjvlakjrflkhfbvlaihbvflkjhbfvlairflwiaemjc.scvnlarliadjvnakljdsfbvilawyrhbflsdkjhbfvlairb", true);
@@ -215,7 +225,7 @@ public class UtilTester {
 	
 	private static void isValidPasswordFormatTest() {
 		System.out.println("**********Testing is Valid Password Format************");
-		Map<String,Boolean> checkList = new HashMap<String, Boolean>();
+		Map<String,Boolean> checkList = new HashMap<>();
 		
 		checkList.put("a@b", false);
 		checkList.put("Jim654aa", true);
@@ -252,7 +262,7 @@ public class UtilTester {
 	
 	private static void isValidNameFormatTest() {
 		System.out.println("**********Testing is Valid Name Format************");
-		Map<String,Boolean> checkList = new HashMap<String, Boolean>();
+		Map<String,Boolean> checkList = new HashMap<>();
 		
 		checkList.put("a@b", false);
 		checkList.put("Jim", true);
@@ -286,7 +296,7 @@ public class UtilTester {
 	
 	private static void isValidEmailFormatTest() {
 		System.out.println("**********Testing is Valid Email Format************");
-		Map<String,Boolean> checkList = new HashMap<String, Boolean>();
+		Map<String,Boolean> checkList = new HashMap<>();
 		
 		checkList.put("a@b", true);
 		checkList.put("a.@b", false);
