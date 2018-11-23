@@ -53,6 +53,16 @@ public ErrorType getType() {
 	public List<InputErrorType> getTypes() {
 		return inputErrorTypes;
 	}
+	
+	@Override
+	public String toString() {
+		String toReturn = "Error " + this.type.getNumber() + ", " + this.type.name() + ": " + this.getMessage();
+		
+		if(type == ErrorType.INVALID_PARAMETER) {
+			toReturn  = toReturn + this.inputErrorTypes;
+		}
+		return toReturn;
+	}
 
 	
 	

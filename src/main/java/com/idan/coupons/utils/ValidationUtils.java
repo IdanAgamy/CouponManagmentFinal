@@ -18,6 +18,11 @@ public class ValidationUtils {
 	 * @return If the date input is valid or not.
 	 */
 	public static boolean isValidDateFormat(String str) {
+
+		if(str == null) {
+			return false;
+		}
+		
 		String[] date = str.split("-");
 		
 		if(date.length !=3) {
@@ -98,6 +103,10 @@ public class ValidationUtils {
 	 * @return If the email input is valid or not.
 	 */
 	public static boolean isValidEmailFormat(String str) {
+
+		if(str == null) {
+			return false;
+		}
 		
 		char[] charArr=str.toCharArray();
 		int lastCharPos = charArr.length-1;
@@ -171,6 +180,10 @@ public class ValidationUtils {
 	 */
 	public static boolean isValidNameFormat(String str) {
 		
+		if(str == null) {
+			return false;
+		}
+		
 		char[] charArr=str.toCharArray();
 		
 		// Checking for valid name length.
@@ -199,6 +212,10 @@ public class ValidationUtils {
 	 * @return If the password input is valid or not.
 	 */
 	public static boolean isValidPasswordFormat(String str) {
+		
+		if(str == null) {
+			return false;
+		}
 		
 		boolean hasDigit = false;
 		boolean hasLetter = false;
@@ -265,6 +282,10 @@ public class ValidationUtils {
 	 */
 	public static boolean isValidMessageFormat(String str) {
 		
+		if(str == null) {
+			return false;
+		}
+		
 		return str.length() >= 100;
 		
 	}
@@ -276,7 +297,11 @@ public class ValidationUtils {
 	 * @return if the start date of a coupon is after the end date.
 	 */
 	public static boolean isStartEndDateMiss(String couponStartDate, String couponEndDate) {
-
+		
+		if(couponStartDate == null || couponEndDate == null ) {
+			return false;
+		}
+		
 		GregorianCalendar startDate = DateUtils.strToDateConverter(couponStartDate);
 		GregorianCalendar endDate = DateUtils.strToDateConverter(couponEndDate);
 		
@@ -290,13 +315,17 @@ public class ValidationUtils {
 	 */
 	public static boolean isStartDateAlreadyPassed(String couponStartDate) {
 
+		if(couponStartDate == null) {
+			return false;
+		}
+		
 		GregorianCalendar startDate = DateUtils.strToDateConverter(couponStartDate);
 		
 		return startDate.before(new GregorianCalendar());
 	}
 	
 	/**
-	 * Validating if the user can request an action.
+	 * Validating if the userID match the ID related to the request.
 	 * @param request - the request from the client.
 	 * @param requestId - Id of the request.
 	 * @throws ApplicationException

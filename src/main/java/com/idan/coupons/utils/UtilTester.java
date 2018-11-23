@@ -88,7 +88,7 @@ public class UtilTester {
 	
 	private static void isValidAmountTest() {
 		System.out.println("**********Testing is Valid Amount************");
-		Map<Integer,Boolean> checkList = new HashMap<>();
+		Map<Integer,Boolean> checkList = new HashMap<Integer, Boolean>();
 		
 		checkList.put(32, true);
 		checkList.put(-23, false);
@@ -112,7 +112,7 @@ public class UtilTester {
 
 	private static void isValidPriceTest() {
 		System.out.println("**********Testing is Valid Price************");
-		Map<Double,Boolean> checkList = new HashMap<>();
+		Map<Double,Boolean> checkList = new HashMap<Double, Boolean>();
 		
 		checkList.put(32.0, true);
 		checkList.put(-23.0, false);
@@ -139,7 +139,7 @@ public class UtilTester {
 		
 		
 		
-		Map<String,Boolean> checkList = new HashMap<>();
+		Map<String,Boolean> checkList = new HashMap<String, Boolean>();
 		
 		checkList.put("a-b", false);
 		checkList.put("2000-10-10", true);
@@ -176,7 +176,7 @@ public class UtilTester {
 
 	private static void isValidMessageFormatTest() {
 		System.out.println("**********Testing is Valid Message Format************");
-		Map<String,Boolean> checkList = new HashMap<>();
+		Map<String,Boolean> checkList = new HashMap<String, Boolean>();
 		
 		checkList.put("a@b", false);
 		checkList.put("lsjhbfglijrnvlidfjvlakjrflkhfbvlaihbvflkjhbfvlairflwiaemjc.scvnlarliadjvnakljdsfbvilawyrhbflsdkjhbfvlairb", true);
@@ -225,7 +225,7 @@ public class UtilTester {
 	
 	private static void isValidPasswordFormatTest() {
 		System.out.println("**********Testing is Valid Password Format************");
-		Map<String,Boolean> checkList = new HashMap<>();
+		Map<String,Boolean> checkList = new HashMap<String, Boolean>();
 		
 		checkList.put("a@b", false);
 		checkList.put("Jim654aa", true);
@@ -262,7 +262,7 @@ public class UtilTester {
 	
 	private static void isValidNameFormatTest() {
 		System.out.println("**********Testing is Valid Name Format************");
-		Map<String,Boolean> checkList = new HashMap<>();
+		Map<String,Boolean> checkList = new HashMap<String, Boolean>();
 		
 		checkList.put("a@b", false);
 		checkList.put("Jim", true);
@@ -296,7 +296,7 @@ public class UtilTester {
 	
 	private static void isValidEmailFormatTest() {
 		System.out.println("**********Testing is Valid Email Format************");
-		Map<String,Boolean> checkList = new HashMap<>();
+		Map<String,Boolean> checkList = new HashMap<String, Boolean>();
 		
 		checkList.put("a@b", true);
 		checkList.put("a.@b", false);

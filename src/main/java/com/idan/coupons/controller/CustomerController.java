@@ -1,12 +1,9 @@
 package com.idan.coupons.controller;
 
 import java.util.ArrayList;
-import java.util.List;
-
-//import com.idan.coupons.beans.Company;
+import java.util.List;import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import com.idan.coupons.beans.Customer;
-//import com.idan.coupons.dao.CompanyDao;
-//import com.idan.coupons.dao.CouponDao;
 import com.idan.coupons.dao.CustomerDao;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.InputErrorType;
@@ -14,17 +11,12 @@ import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
 
+@Controller
 public class CustomerController {
 	
-//	private CouponDao couponDao;
-//	private CompanyDao companyDao;
+	@Autowired
 	private CustomerDao customerDao;
 	
-	public CustomerController(){
-//		this.couponDao=new CouponDao();
-//		this.companyDao=new CompanyDao();
-		this.customerDao=new CustomerDao();
-	}
 	
 	/**
 	 * Creating a customer in the DB.
@@ -177,7 +169,7 @@ public class CustomerController {
 			throw new ApplicationException(ErrorType.NAME_IS_ALREADY_EXISTS, DateUtils.getCurrentDateAndTime()
 					+" Update customer has failed."
 					+"\nThe user attempted to update a customer using an Email that is already in use."
-					+"\nCustomer Name="+customer.getCustomerName());
+					+"\nCustomer Email="+customer.getCustomerEmail());
 		}
 		
 	}
@@ -207,7 +199,7 @@ public class CustomerController {
 	 */
 	private void validateCustomer(Customer customer) throws ApplicationException {
 
-		List<InputErrorType> errorTypes = new ArrayList<>();
+		List<InputErrorType> errorTypes = new ArrayList<InputErrorType>();
 		
 		if(!ValidationUtils.isValidNameFormat(customer.getCustomerName())) {
 			errorTypes.add(InputErrorType.INVALID_NAME);

@@ -8,15 +8,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.idan.coupons.beans.Company;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.JdbcUtils;
 
+//TODO implement Transactional
+
+@Repository
 public class CompanyDao{
 
-	// TODO delete printStackTrace in phase 2
+	
 	
 	
 	/**
@@ -25,6 +30,7 @@ public class CompanyDao{
 	 * @return Long of the ID of the created company.
 	 * @throws ApplicationException
 	 */
+	
 	public Long createCompany(Company company) throws ApplicationException {
 
 		// Preparing the JDBC resources for sending the query.
@@ -45,8 +51,7 @@ public class CompanyDao{
 			preparedStatement.setString(2, company.getCompanyPassword());
 			preparedStatement.setString(3, company.getCompanyEmail());
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 
 			// Executing the query.
 			preparedStatement.executeUpdate();
@@ -94,8 +99,7 @@ public class CompanyDao{
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, companyID);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 
 			preparedStatement.executeUpdate();
 						
@@ -143,8 +147,7 @@ public class CompanyDao{
 			preparedStatement.setString	(3, company.getCompanyEmail());
 			preparedStatement.setLong	(4, company.getCompanyId());
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 			
 			preparedStatement.executeUpdate();
 			
@@ -192,8 +195,7 @@ public class CompanyDao{
 
 			preparedStatement.setLong(1, companyId);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 
 			resultSet = preparedStatement.executeQuery();
 			
@@ -248,8 +250,7 @@ public class CompanyDao{
 
 			preparedStatement.setString(1, companyName);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 
 			resultSet = preparedStatement.executeQuery();
 			
@@ -303,8 +304,7 @@ public class CompanyDao{
 
 			preparedStatement.setString(1, companyEmail);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 
 			resultSet = preparedStatement.executeQuery();
 			
@@ -342,7 +342,7 @@ public class CompanyDao{
 	 */
 	public List<Company> getAllCompanies() throws ApplicationException{
 
-		List<Company> companies = new ArrayList<>();
+		List<Company> companies = new ArrayList<Company>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -356,8 +356,7 @@ public class CompanyDao{
 			String sql = "SELECT * FROM company";
 			preparedStatement = connection.prepareStatement(sql);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 
 			resultSet = preparedStatement.executeQuery();
 			
@@ -412,8 +411,7 @@ public class CompanyDao{
 			preparedStatement.setString(1, companyName);
 			preparedStatement.setString(2, companyPasword);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 
 			resultSet = preparedStatement.executeQuery();
 			
@@ -462,8 +460,7 @@ public class CompanyDao{
 			preparedStatement = connection.prepareStatement(sql);
 			
 			preparedStatement.setString(1, companyEmail);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			resultSet = preparedStatement.executeQuery();
 			
 			// Checking if we got a reply with the requested data. If no data was received, returns true.
@@ -508,8 +505,7 @@ public class CompanyDao{
 			
 			preparedStatement.setString(1, companyEmail);
 			preparedStatement.setLong(2, companyID);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+	
 			resultSet = preparedStatement.executeQuery();
 			
 			// Checking if we got a reply with the requested data. If no data was received, returns true.
@@ -552,8 +548,7 @@ public class CompanyDao{
 			preparedStatement = connection.prepareStatement(sql);
 			
 			preparedStatement.setString(1, companyName);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+
 			resultSet = preparedStatement.executeQuery();
 			
 			// Checking if we got a reply with the requested data. If no data was received, returns true.
@@ -598,8 +593,7 @@ public class CompanyDao{
 			
 			preparedStatement.setString(1, companyName);
 			preparedStatement.setLong(2, companyID);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+
 			resultSet = preparedStatement.executeQuery();
 			
 			// Checking if we got a reply with the requested data. If no data was received, returns true.

@@ -3,6 +3,9 @@ package com.idan.coupons.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
 import com.idan.coupons.beans.Company;
 //import com.idan.coupons.beans.Customer;
 import com.idan.coupons.dao.CompanyDao;
@@ -14,17 +17,15 @@ import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
 
+
+@Controller
 public class CompanyController {
 	
-//	private CouponDao couponDao;
+	@Autowired
 	private CompanyDao companyDao;
-//	private CustomerDao customerDao;
+
 	
-	public CompanyController(){
-//		this.couponDao=new CouponDao();
-		this.companyDao=new CompanyDao();
-//		this.customerDao=new CustomerDao();
-	}
+
 	
 	/**
 	 * Creating a company in the DB.
@@ -208,7 +209,7 @@ public class CompanyController {
 			throw new ApplicationException(ErrorType.NAME_IS_ALREADY_EXISTS, DateUtils.getCurrentDateAndTime()
 					+" Create company has failed."
 					+"\nThe user attempted to create a new company using a name that is already in use."
-					+"\nCustomer name="+company.getCompanyEmail());
+					+"\nCustomer name="+company.getCompanyName());
 		}
 		
 		if (this.companyDao.isCompanyExistByEmail(company.getCompanyEmail())) {
@@ -229,7 +230,7 @@ public class CompanyController {
 	private void validateCompany(Company company) throws ApplicationException {
 		
 		
-		List<InputErrorType> errorTypes = new ArrayList<>();		
+		List<InputErrorType> errorTypes = new ArrayList<InputErrorType>();		
 		
 		if(!ValidationUtils.isValidNameFormat(company.getCompanyName())) {
 			errorTypes.add(InputErrorType.INVALID_NAME);

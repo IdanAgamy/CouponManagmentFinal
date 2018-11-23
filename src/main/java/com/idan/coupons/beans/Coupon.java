@@ -1,11 +1,9 @@
 package com.idan.coupons.beans;
 
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import com.idan.coupons.enums.CouponType;
 
-@XmlRootElement
+
 public class Coupon{
 	
 	private Long couponId;
@@ -129,9 +127,78 @@ public class Coupon{
 				+ ", couponMessage=" + couponMessage + ", couponPrice=" + couponPrice + ", couponImage=" + couponImage
 				+ ", companyID=" + companyID + "]";
 	}
-	/*
-	 *  This method checks if the date is in the correct date format "YYYY-MM-DD"
-	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((companyID == null) ? 0 : companyID.hashCode());
+		result = prime * result + couponAmount;
+		result = prime * result + ((couponEndDate == null) ? 0 : couponEndDate.hashCode());
+		result = prime * result + ((couponId == null) ? 0 : couponId.hashCode());
+		result = prime * result + ((couponImage == null) ? 0 : couponImage.hashCode());
+		result = prime * result + ((couponMessage == null) ? 0 : couponMessage.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(couponPrice);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((couponStartDate == null) ? 0 : couponStartDate.hashCode());
+		result = prime * result + ((couponTitle == null) ? 0 : couponTitle.hashCode());
+		result = prime * result + ((couponType == null) ? 0 : couponType.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Coupon other = (Coupon) obj;
+		if (companyID == null) {
+			if (other.companyID != null)
+				return false;
+		} else if (!companyID.equals(other.companyID))
+			return false;
+		if (couponAmount != other.couponAmount)
+			return false;
+		if (couponEndDate == null) {
+			if (other.couponEndDate != null)
+				return false;
+		} else if (!couponEndDate.equals(other.couponEndDate))
+			return false;
+		if (couponId == null) {
+			if (other.couponId != null)
+				return false;
+		} else if (!couponId.equals(other.couponId))
+			return false;
+		if (couponImage == null) {
+			if (other.couponImage != null)
+				return false;
+		} else if (!couponImage.equals(other.couponImage))
+			return false;
+		if (couponMessage == null) {
+			if (other.couponMessage != null)
+				return false;
+		} else if (!couponMessage.equals(other.couponMessage))
+			return false;
+		if (Double.doubleToLongBits(couponPrice) != Double.doubleToLongBits(other.couponPrice))
+			return false;
+		if (couponStartDate == null) {
+			if (other.couponStartDate != null)
+				return false;
+		} else if (!couponStartDate.equals(other.couponStartDate))
+			return false;
+		if (couponTitle == null) {
+			if (other.couponTitle != null)
+				return false;
+		} else if (!couponTitle.equals(other.couponTitle))
+			return false;
+		if (couponType != other.couponType)
+			return false;
+		return true;
+	}
+
+	
 	
 	
 

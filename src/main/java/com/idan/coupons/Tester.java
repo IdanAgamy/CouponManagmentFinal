@@ -176,8 +176,7 @@ public class Tester {
 //			String sql = "ALTER TABLE coupon AUTO_INCREMENT = ?;";
 //			preparedStatement = connection.prepareStatement(sql);
 //			preparedStatement.setLong(1, 1);
-//			// TODO delete print
-//			System.out.println(preparedStatement); // Checking the query sent to the server
+//			
 //			preparedStatement.executeUpdate();
 //			
 //		}
@@ -207,8 +206,7 @@ public class Tester {
 //			String sql = "ALTER TABLE company AUTO_INCREMENT = ?;";
 //			preparedStatement = connection.prepareStatement(sql);
 //			preparedStatement.setLong(1, 1);
-//			// TODO delete print
-//			System.out.println(preparedStatement); // Checking the query sent to the server
+//		
 //			preparedStatement.executeUpdate();
 //			
 //		}
@@ -238,8 +236,7 @@ public class Tester {
 //			String sql = "ALTER TABLE customer AUTO_INCREMENT = ?;";
 //			preparedStatement = connection.prepareStatement(sql);
 //			preparedStatement.setLong(1, 1);
-//			// TODO delete print
-//			System.out.println(preparedStatement); // Checking the query sent to the server
+//		
 //			preparedStatement.executeUpdate();
 //			
 //		}
@@ -269,8 +266,6 @@ public class Tester {
 //			String sql = "ALTER TABLE customer_coupon AUTO_INCREMENT = ?;";
 //			preparedStatement = connection.prepareStatement(sql);
 //			preparedStatement.setLong(1, 1);
-//			// TODO delete print
-//			System.out.println(preparedStatement); // Checking the query sent to the server
 //			preparedStatement.executeUpdate();
 //			
 //		}

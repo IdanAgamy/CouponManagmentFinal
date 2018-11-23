@@ -51,67 +51,66 @@ public class ControllerTest {
 	}
 
 //	private static void createCouponTest(CompanyController cc) {
-//		// TODO Auto-generated method stub
+//		
 //		
 //	}
 
 	private static void getCouponByCouponIdTest() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	private static void getAllCouponsTest() {
-		// TODO Auto-generated method stub
+	
 		
 	}
 
 	private static void removeCouponByIDTest() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	private static void updateCouponTest() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	private static void getCouponByTypeTest() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	private static void getCouponInOrderByPriceTest() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	private static void getCouponsUpToPriceTest() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	private static void getCouponsUpToEndDateTest() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	private static void getCouponsByCompanyIDTest() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	private static void getCouponsByCustomerIDTest() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	private static void buyCouponTest() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	private static void getCouponLeftInStockByCouponIDTest() {
-		// TODO Auto-generated method stub
+	
 		
 	}
 

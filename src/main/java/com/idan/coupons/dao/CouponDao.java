@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.idan.coupons.beans.Coupon;
 import com.idan.coupons.enums.CouponType;
 import com.idan.coupons.enums.ErrorType;
@@ -15,10 +17,11 @@ import com.idan.coupons.enums.OrderType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.JdbcUtils;
+//TODO implement Transactional
 
+@Repository
 public class CouponDao{
 
-	// TODO delete printStackTrace in phase 2
 	
 	
 	/**
@@ -50,8 +53,7 @@ public class CouponDao{
 			preparedStatement.setString	(8, coupon.getCouponImage()			);
 			preparedStatement.setLong	(9, coupon.getCompanyID()			);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+
 
 			preparedStatement.executeUpdate();
 			ResultSet resultSet = preparedStatement.getGeneratedKeys();
@@ -96,8 +98,7 @@ public class CouponDao{
 			preparedStatement = connection.prepareStatement(sql);
 			
 			preparedStatement.setLong(1, couponId);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+
 			resultSet = preparedStatement.executeQuery();
 
 			// Checking if we got a reply with the requested data. If no data was received, returns null.
@@ -130,7 +131,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getAllCoupons() throws ApplicationException{
 		
-		List<Coupon> coupons = new ArrayList<>();
+		List<Coupon> coupons = new ArrayList<Coupon>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -143,8 +144,7 @@ public class CouponDao{
 			String sql = "SELECT * FROM coupon";
 			preparedStatement = connection.prepareStatement(sql);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+
 			
 			resultSet = preparedStatement.executeQuery();
 			
@@ -188,8 +188,7 @@ public class CouponDao{
 			String sql = "DELETE FROM coupon WHERE CouponID = ?; ";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, couponID);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+
 			preparedStatement.executeUpdate();
 			
 		}
@@ -225,8 +224,7 @@ public class CouponDao{
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setLong(1, couponID);
 			preparedStatement.setLong(2, customerID);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+
 			preparedStatement.executeUpdate();
 			
 		}
@@ -258,7 +256,7 @@ public class CouponDao{
 //			
 //			preparedStatement.setLong(1, customerID);
 //			
-//			// TODO delete print
+//			// 
 //			System.out.println(preparedStatement); // Checking the query sent to the server
 //			
 //			preparedStatement.executeUpdate();
@@ -290,7 +288,7 @@ public class CouponDao{
 //			String sql = "DELETE FROM coupon WHERE CompanyID = ?; ";
 //			preparedStatement = connection.prepareStatement(sql);
 //			preparedStatement.setLong(1, companyID);
-//			// TODO delete print
+//			// 
 //			System.out.println(preparedStatement); // Checking the query sent to the server
 //			preparedStatement.executeUpdate();
 //			
@@ -336,8 +334,7 @@ public class CouponDao{
 			preparedStatement.setString(8, coupon.getCouponImage());
 			preparedStatement.setLong(9, coupon.getCompanyID());
 			preparedStatement.setLong(10, coupon.getCouponId());
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			
 			preparedStatement.executeUpdate();
 			
@@ -363,7 +360,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponByType(CouponType type) throws ApplicationException{
 		
-		List<Coupon> couponsByType = new ArrayList<>();
+		List<Coupon> couponsByType = new ArrayList<Coupon>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -377,8 +374,7 @@ public class CouponDao{
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, type.name());
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			resultSet = preparedStatement.executeQuery();
 
 			// Looping on the received result to add to a list of Coupon objects.
@@ -411,7 +407,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponInOrderByPrice(OrderType orderType) throws ApplicationException{
 		
-		List<Coupon> couponsInOrderByPrice = new ArrayList<>();
+		List<Coupon> couponsInOrderByPrice = new ArrayList<Coupon>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -431,8 +427,7 @@ public class CouponDao{
 				break;
 			}			
 			preparedStatement = connection.prepareStatement(sql);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			resultSet = preparedStatement.executeQuery();
 
 			// Looping on the received result to add to a list of Coupon objects.
@@ -465,7 +460,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponsUpToPrice(double price) throws ApplicationException{
 		
-		List<Coupon> couponsUpToPrice = new ArrayList<>();
+		List<Coupon> couponsUpToPrice = new ArrayList<Coupon>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -480,8 +475,7 @@ public class CouponDao{
 			
 			preparedStatement.setDouble(1, price);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			
 			resultSet = preparedStatement.executeQuery();
 
@@ -516,7 +510,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponsUpToEndDate(String endDate) throws ApplicationException{
 		
-		List<Coupon> couponsUpToPrice = new ArrayList<>();
+		List<Coupon> couponsUpToPrice = new ArrayList<Coupon>();
 		
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -532,8 +526,7 @@ public class CouponDao{
 			
 			preparedStatement.setString(1, endDate);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			
 			resultSet = preparedStatement.executeQuery();
 
@@ -568,7 +561,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponsByCompanyID(Long companyID) throws ApplicationException{
 		
-		List<Coupon> couponsByCompany = new ArrayList<>();
+		List<Coupon> couponsByCompany = new ArrayList<Coupon>();
 		
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -584,8 +577,7 @@ public class CouponDao{
 			
 			preparedStatement.setLong(1, companyID);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			
 			resultSet = preparedStatement.executeQuery();
 
@@ -618,7 +610,7 @@ public class CouponDao{
 	 */
 	public List<Coupon> getCouponsByCustomerID(Long customerID) throws ApplicationException{
 		
-		List<Coupon> couponsByCustomer = new ArrayList<>();
+		List<Coupon> couponsByCustomer = new ArrayList<Coupon>();
 		
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -634,8 +626,7 @@ public class CouponDao{
 			
 			preparedStatement.setLong(1, customerID);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 			
 			resultSet = preparedStatement.executeQuery();
 
@@ -683,8 +674,7 @@ public class CouponDao{
 			preparedStatement.setLong(1, customerID);
 			preparedStatement.setLong(2, couponID);
 
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 			preparedStatement.executeUpdate();
 		} 
 
@@ -716,7 +706,7 @@ public class CouponDao{
 //			preparedStatement = connection.prepareStatement(sql);
 //			
 //			preparedStatement.setLong(1, couponID);
-//			// TODO delete print
+//			// 
 //			System.out.println(preparedStatement); // Checking the query sent to the server
 //			resultSet = preparedStatement.executeQuery();
 //
@@ -764,7 +754,7 @@ public class CouponDao{
 //			preparedStatement = connection.prepareStatement(sql);
 //			
 //			preparedStatement.setLong(1, couponID);
-//			// TODO delete print
+//			
 //			System.out.println(preparedStatement); // Checking the query sent to the server
 //			resultSet = preparedStatement.executeQuery();
 //
@@ -803,8 +793,7 @@ public class CouponDao{
 			String sql = "DELETE FROM coupon WHERE CouponEndDate < ?; ";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, endDate);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			preparedStatement.executeUpdate();
 			
 		}
@@ -844,8 +833,7 @@ public class CouponDao{
 			preparedStatement = connection.prepareStatement(sql);
 			
 			preparedStatement.setString(1, couponTitle);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 			resultSet = preparedStatement.executeQuery();
 			
 			// Checking if we got a reply with the requested data. If no data was received, returns true.
@@ -890,8 +878,7 @@ public class CouponDao{
 			
 			preparedStatement.setString(1, couponTitle);
 			preparedStatement.setLong(2, couponID);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			resultSet = preparedStatement.executeQuery();
 			
 			// Checking if we got a reply with the requested data. If no data was received, returns true.
@@ -936,8 +923,7 @@ public class CouponDao{
 			
 			preparedStatement.setLong(1, customerID);
 			preparedStatement.setLong(2, couponID);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 			resultSet = preparedStatement.executeQuery();
 			
 			// Checking if we got a reply with the requested data. If no data was received, returns true.

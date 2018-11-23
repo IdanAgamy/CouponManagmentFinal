@@ -1,8 +1,5 @@
 package com.idan.coupons.beans;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement
 public class Company{
 	
 	private Long companyId;

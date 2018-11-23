@@ -13,15 +13,26 @@ public class DaoTester {
 	public void testGetCouponByCouponId() throws ApplicationException {
 		CouponDao cd = new CouponDao();
 		Coupon resultCoupon = cd.getCouponByCouponId(1L);
-		Coupon expectedCoupon = new Coupon(1l, "best song f all time", "1987-10-10", "3000-10-10", 2, CouponType.Food, "Never gonna give you up", 67.8, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1);
+		Coupon expectedCoupon = new Coupon(1l, 
+				"best song f all time", 
+				"1987-10-10", 
+				"3000-10-10", 
+				2, 
+				CouponType.Food, 
+				"Never gonna give you up", 
+				67.8, 
+				"https://www.youtube.com/watch?v=dQw4w9WgXcQ", 
+				1L);
 		assertEquals(expectedCoupon, resultCoupon);
 	}
 	
 	@Test
 	public void testCreateCouponTest() throws ApplicationException {
 		CouponDao cd = new CouponDao();
-		Coupon couponToCreat = new Coupon("test coupon", "1987-10-10", "3000-10-10", 2, CouponType.Food, "test", 67.8, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1);
+		Coupon couponToCreat = new Coupon("test coupon", "1987-10-10", "3000-10-10", 2, CouponType.Food, "test", 67.8, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1L);
 		Long createdCouponID = cd.createCoupon(couponToCreat);
+		couponToCreat.setCouponId(createdCouponID);
+		Coupon resultCoupon = cd.getCouponByCouponId(createdCouponID);
 		assertEquals(couponToCreat, resultCoupon);
 	}
 

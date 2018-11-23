@@ -443,9 +443,8 @@ public class DaoTester {
 //		createCompanyTest(cd);
 		
 		try {
-			verify("check for new coupon");
 			cd.updateCompany(new Company(9l, "Meister Inc", "654shlomp", "something@meister.com"));
-		} catch (ApplicationException | IOException e) {
+		} catch (ApplicationException  e) {
 			
 			e.printStackTrace();
 		}
@@ -564,9 +563,8 @@ public class DaoTester {
 		createCustomerTest(cd);
 		
 		try {
-			verify("Check db");
 			cd.updateCustomer(new Customer(4L, "Karl", "sdsdsdsd", "asd@asd"));
-		} catch (IOException | ApplicationException e) {
+		} catch (ApplicationException e) {
 			e.printStackTrace();
 		}
 		

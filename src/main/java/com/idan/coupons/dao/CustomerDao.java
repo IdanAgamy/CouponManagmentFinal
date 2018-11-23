@@ -9,16 +9,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
 
 import com.idan.coupons.beans.Customer;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.JdbcUtils;
+//TODO implement Transactional
 
+@Repository
 public class CustomerDao{
 
-	// TODO delete printStackTrace in phase 2
+
 	
 	
 	/**
@@ -45,8 +48,7 @@ public class CustomerDao{
 			preparedStatement.setString(2, customer.getCustomerPassword());
 			preparedStatement.setString(3, customer.getCustomerEmail());
 
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			
 			preparedStatement.executeUpdate();
 			ResultSet resultSet = preparedStatement.getGeneratedKeys();
@@ -89,8 +91,7 @@ public class CustomerDao{
 			
 			preparedStatement.setLong(1, customerID);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 			
 			preparedStatement.executeUpdate();
 			
@@ -134,8 +135,7 @@ public class CustomerDao{
 				preparedStatement.setString(3, customer.getCustomerEmail());
 				preparedStatement.setLong(4, customer.getCustomerId());
 				
-				// TODO delete print
-				System.out.println(preparedStatement); // Checking the query sent to the server
+			
 				
 				preparedStatement.executeUpdate();
 				
@@ -177,8 +177,7 @@ public class CustomerDao{
 			
 			preparedStatement.setLong(1, customerId);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 			
 			resultSet = preparedStatement.executeQuery();
 
@@ -211,7 +210,7 @@ public class CustomerDao{
 	 * @throws ApplicationException
 	 */
 	public List<Customer> getCustomersByCustomerName(String customerName) throws ApplicationException {
-		ArrayList<Customer> customers = new ArrayList<>();
+		ArrayList<Customer> customers = new ArrayList<Customer>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -226,8 +225,7 @@ public class CustomerDao{
 
 			preparedStatement.setString(1, customerName);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+	
 			
 			resultSet = preparedStatement.executeQuery();
 
@@ -275,8 +273,7 @@ public class CustomerDao{
 			
 			preparedStatement.setString(1, customerEmail);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 			
 			resultSet = preparedStatement.executeQuery();
 
@@ -310,7 +307,7 @@ public class CustomerDao{
 	 */
 	public ArrayList<Customer> getAllCustomers() throws ApplicationException{
 		
-		ArrayList<Customer> customers = new ArrayList<>();
+		ArrayList<Customer> customers = new ArrayList<Customer>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -323,8 +320,7 @@ public class CustomerDao{
 			String sql = "SELECT * FROM Customer";
 			preparedStatement = connection.prepareStatement(sql);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+		
 			
 			resultSet = preparedStatement.executeQuery();
 
@@ -374,8 +370,7 @@ public class CustomerDao{
 			preparedStatement.setString(1, customerEmail);
 			preparedStatement.setString(2, customerPassword);
 			
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+			
 			
 			resultSet = preparedStatement.executeQuery();
 			
@@ -423,8 +418,7 @@ public class CustomerDao{
 			preparedStatement = connection.prepareStatement(sql);
 			
 			preparedStatement.setString(1, customerEmail);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+	
 			resultSet = preparedStatement.executeQuery();
 			
 			// Checking if we got a reply with the requested data. If no data was received, returns true.
@@ -469,8 +463,7 @@ public class CustomerDao{
 			
 			preparedStatement.setString(1, customerEmail);
 			preparedStatement.setLong(2, customerID);
-			// TODO delete print
-			System.out.println(preparedStatement); // Checking the query sent to the server
+	
 			resultSet = preparedStatement.executeQuery();
 			
 			// Checking if we got a reply with the requested data. If no data was received, returns true.

@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
 import com.idan.coupons.beans.Coupon;
 //import com.idan.coupons.dao.CompanyDao;
 import com.idan.coupons.dao.CouponDao;
@@ -18,19 +21,11 @@ import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
 
+@Controller
 public class CouponController {
 	
-	//Assigning a local variable for each one of the 'dao' objects,
-	//in order to gain access to the methods communicating with the DB.
+	@Autowired
 	private CouponDao couponDao;
-//	private CompanyDao companyDao;
-//	private CustomerDao customerDao;
-	
-	public CouponController(){
-		this.couponDao=new CouponDao();
-//		this.companyDao=new CompanyDao();
-//		this.customerDao=new CustomerDao();
-	}
 	
 	/**
 	 * Creating a coupon in the DB.
@@ -386,7 +381,7 @@ public class CouponController {
 	 */
 	private void validateCoupon(Coupon coupon) throws ApplicationException {
 		
-		List<InputErrorType> errorTypes = new ArrayList<>();
+		List<InputErrorType> errorTypes = new ArrayList<InputErrorType>();
 		boolean isDateValide = true;
 		
 		if(!ValidationUtils.isValidNameFormat(coupon.getCouponTitle())) {
