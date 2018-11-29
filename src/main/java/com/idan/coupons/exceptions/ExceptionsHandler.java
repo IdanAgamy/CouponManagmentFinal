@@ -2,6 +2,8 @@ package com.idan.coupons.exceptions;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,6 +15,8 @@ import com.idan.coupons.enums.ErrorType;
 @ControllerAdvice
 public class ExceptionsHandler{
 	
+	private static final Logger logger = LogManager.getLogger(ExceptionsHandler.class);
+	
 	@ExceptionHandler(ApplicationException.class)
 	public ApplicationError handleApplicationException(HttpServletResponse response, ApplicationException exception) {
 //		String errorMessage = exception.toString();
@@ -21,8 +25,8 @@ public class ExceptionsHandler{
 			error.setInputErrorTypes(exception.getTypes()); 
 		}
 		if(exception.getType() == ErrorType.SYSTEM_ERROR) {
-			//TODO implement logger.
-			exception.printStackTrace();
+			logger.error(error.getErrorMessage(), exception);
+//			exception.printStackTrace();
 		}
 		response.setStatus(exception.getType().getNumber());
 		return error;
@@ -35,7 +39,7 @@ public class ExceptionsHandler{
 		int errorCode = 500;
 		ApplicationError error = new ApplicationError(errorCode, ErrorType.SYSTEM_ERROR.name(), exception.getMessage());
 		exception.printStackTrace();
-		//TODO implement logger.
+		logger.error(error.getErrorMessage(), exception);
 		response.setStatus(errorCode);
         return error;
 	}
