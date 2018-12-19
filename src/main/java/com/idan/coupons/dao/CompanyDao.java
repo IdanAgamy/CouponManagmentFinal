@@ -342,7 +342,7 @@ public class CompanyDao{
 	 */
 	public List<Company> getAllCompanies() throws ApplicationException{
 
-		List<Company> companies = new ArrayList<Company>();
+		List<Company> companies = new ArrayList<>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;

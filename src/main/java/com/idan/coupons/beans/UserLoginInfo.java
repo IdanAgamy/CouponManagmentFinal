@@ -6,6 +6,7 @@ import com.idan.coupons.enums.UserType;
 
 public class UserLoginInfo {
 	
+	private Long userID;
 	private String name;
 	private String email;
 	private String password;
@@ -20,6 +21,12 @@ public class UserLoginInfo {
 		this.email = email;
 		this.password = password;
 		this.userType = userType;
+	}
+	public Long getUserID() {
+		return userID;
+	}
+	public void setUserID(Long userID) {
+		this.userID = userID;
 	}
 	public String getName() {
 		return name;

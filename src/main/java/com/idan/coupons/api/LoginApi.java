@@ -59,7 +59,7 @@ public class LoginApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public void login(HttpServletRequest request, HttpServletResponse response,@RequestBody  UserLoginInfo userLoginInfo) throws ApplicationException {
+	public UserLoginInfo login(HttpServletRequest request, HttpServletResponse response,@RequestBody  UserLoginInfo userLoginInfo) throws ApplicationException {
 		
 		
 		if (userLoginInfo != null) {
@@ -68,7 +68,8 @@ public class LoginApi {
 				request.getSession();
 				// Adding cookies for admin.
 				response.addCookie(new Cookie("userType",UserType.ADMIN.name()));
-				return;
+				userLoginInfo.setUserID(0L);
+				return userLoginInfo;
 			}
 			// Validating a company login.
 			if(userLoginInfo.getUserType() == UserType.COMPANY) {
@@ -78,10 +79,11 @@ public class LoginApi {
 					request.getSession();					
 					List<Cookie> loginCookies = CookieUtil.loginCookies(company);
 					response = CookieUtil.addCookies(response, loginCookies);	
-					return;
+					userLoginInfo.setUserID(company.getCompanyId());
+					return userLoginInfo;
 				}
 				response.setStatus(401);
-				return;
+				return null;
 			}
 			// Validating a customer login.
 			if(userLoginInfo.getUserType() == UserType.CUSTOMER) {
@@ -90,14 +92,15 @@ public class LoginApi {
 					request.getSession();	
 					List<Cookie> loginCookies = CookieUtil.loginCookies(customer);
 					response = CookieUtil.addCookies(response, loginCookies);
-					return;
+					userLoginInfo.setUserID(customer.getCustomerId());
+					return userLoginInfo;
 				}
 				response.setStatus(401);
-				return;
+				return null;
 			}
 		}
 		response.setStatus(401);
-		return;
+		return null;
 		
 	}
 	
@@ -106,6 +109,7 @@ public class LoginApi {
 	
 	
 	/*
+	 * Content-Type      application/json
 {
 "name":"patric",
 			"userType": "CUSTOMER",
