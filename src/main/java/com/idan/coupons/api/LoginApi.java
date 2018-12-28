@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +23,7 @@ import com.idan.coupons.enums.UserType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.CookieUtil;
 
+@CrossOrigin(origins= {"http://localhost:4200"})
 @RestController
 @RequestMapping("/login")
 public class LoginApi {
@@ -61,7 +63,7 @@ public class LoginApi {
 	@RequestMapping(method = RequestMethod.POST)
 	public UserLoginInfo login(HttpServletRequest request, HttpServletResponse response,@RequestBody  UserLoginInfo userLoginInfo) throws ApplicationException {
 		
-		
+		System.out.println(userLoginInfo);
 		if (userLoginInfo != null) {
 			// Validating the admin login.
 			if(userLoginInfo.getUserType() == UserType.ADMIN && userLoginInfo.getName().equals("admin") && userLoginInfo.getPassword().equals("1234") && userLoginInfo.getEmail().equals("admin@coupons")) {

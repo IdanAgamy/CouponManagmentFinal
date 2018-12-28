@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ import com.idan.coupons.exceptions.ApplicationException;
 //import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
 
-
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 @RequestMapping("/customers")
 public class CustomerApi {

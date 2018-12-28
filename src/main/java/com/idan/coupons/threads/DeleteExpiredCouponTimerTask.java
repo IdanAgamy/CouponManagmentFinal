@@ -39,6 +39,7 @@ public class DeleteExpiredCouponTimerTask extends TimerTask{
 	public void run() {
 
 		try {
+			// TODO change to log4j
 			System.out.println("Deleting expired coupons");
 			couponController.deleteExpiredCoupon();
 		}
