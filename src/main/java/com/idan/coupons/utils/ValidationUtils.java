@@ -330,9 +330,12 @@ public class ValidationUtils {
 	 * @param requestId - Id of the request.
 	 * @throws ApplicationException
 	 */
-	public static void ValidateUser(HttpServletRequest request, long requestId) throws ApplicationException {
-		String userType = (String) request.getAttribute("userType");
-		String userIDstr = (String) request.getAttribute("userID");
+	public static void ValidateUser(HttpServletRequest request, Long requestId) throws ApplicationException {
+		// TODO change back
+//		String userType = (String) request.getAttribute("userType");
+//		String userIDstr = (String) request.getAttribute("userID");
+		String userType = (String) request.getHeader("userType");
+		String userIDstr = (String) request.getHeader("userID");
 		Long userID = null;
 		if(userIDstr == null || userType == null) {
 			throw new ApplicationException(ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime()
@@ -341,7 +344,7 @@ public class ValidationUtils {
 
 		userID = Long.parseLong(userIDstr);
 
-		if ( !userType.equals(UserType.ADMIN.name()) || userID != requestId) {
+		if ( !userType.equals(UserType.ADMIN.name()) && !userID.equals(requestId)) {
 			throw new ApplicationException(ErrorType.UNAUTHORIZED_ACTION, DateUtils.getCurrentDateAndTime()
 					+" Unauthorized action.");
 		} 

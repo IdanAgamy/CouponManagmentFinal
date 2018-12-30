@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration monitorInterval="60">
 	<Properties>
-		<Property name="path">C:\Users\idant\eclipse-workspace\CouponManagmentSystemVer3\logs</Property>
+		<Property name="path">C:\com\CouponManagmentSystemVer3\logs</Property>
 	</Properties>
 	<Appenders>
 		<Console name="Console-Appender" target="SYSTEM_OUT">

@@ -213,8 +213,9 @@ public class CouponApi {
 	@RequestMapping(value ="/purchasedCoupons", method = RequestMethod.GET)
 	//http://localhost:8080/CouponManagmentSystemVer3/coupons/purchasedCoupons
 	public List<Coupon> getCouponsByCustomerID(HttpServletRequest request) throws ApplicationException{
-		
-		String customerIDStr = (String) request.getAttribute("userID");
+		// TODO change back
+//		String customerIDStr = (String) request.getAttribute("userID");
+		String customerIDStr = (String) request.getHeader("userID");
 		if(customerIDStr != null) {
 			Long customerID = Long.valueOf(customerIDStr);
 			return couponController.getCouponsByCustomerID(customerID);
