@@ -48,6 +48,15 @@ public class CookieUtil {
 
 		return loginCookies;
 	}
+	
+	public static List<Cookie> loginCookies() {
+
+		List<Cookie> loginCookies = new ArrayList<Cookie>();
+
+		loginCookies.add(new Cookie("userType", UserType.ADMIN.name()));
+
+		return loginCookies;
+	}
 
 	/**
 	 * Adding the cookies to the browser of the client.

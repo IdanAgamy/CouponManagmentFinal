@@ -61,7 +61,7 @@ public class LoginApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public UserLoginInfo login(HttpServletRequest request, HttpServletResponse response,@RequestBody  UserLoginInfo userLoginInfo) throws ApplicationException {
+	public UserLoginInfo login(HttpServletRequest request, HttpServletResponse response, @RequestBody  UserLoginInfo userLoginInfo) throws ApplicationException {
 		
 		System.out.println(userLoginInfo);
 		if (userLoginInfo != null) {
@@ -69,7 +69,9 @@ public class LoginApi {
 			if(userLoginInfo.getUserType() == UserType.ADMIN && userLoginInfo.getName().equals("admin") && userLoginInfo.getPassword().equals("1234") && userLoginInfo.getEmail().equals("admin@coupons")) {
 				request.getSession();
 				// Adding cookies for admin.
-				response.addCookie(new Cookie("userType",UserType.ADMIN.name()));
+				List<Cookie> loginCookies = CookieUtil.loginCookies();
+				
+				response = CookieUtil.addCookies(response, loginCookies);	
 				userLoginInfo.setUserID(0L);
 				return userLoginInfo;
 			}
@@ -115,7 +117,7 @@ public class LoginApi {
 {
 "name":"patric",
 			"userType": "CUSTOMER",
-			"password":"asdf1234",
+			"password":"aa555456",
 			"email":"a@b"
 	}
 	 */

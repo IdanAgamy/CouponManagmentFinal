@@ -3,6 +3,7 @@ package com.idan.coupons.api;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -81,10 +82,11 @@ public class CompanyApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public void createCompany(@RequestBody Company company) throws ApplicationException{
+	public Company createCompany(HttpServletRequest request, HttpServletResponse response, @RequestBody Company company) throws ApplicationException{
 		if (company != null) {
-			companyController.createCompany(company);
+			company = companyController.createCompany(request, response, company);
 		}
+		return company;
 	}
 
 	/**

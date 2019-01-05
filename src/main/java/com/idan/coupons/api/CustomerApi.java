@@ -51,8 +51,7 @@ public class CustomerApi {
 	 */
 	@RequestMapping(value ="/{customerId}", method = RequestMethod.GET)
 	//http://localhost:8080/CouponManagmentSystemVer3/customers/2
-	public Customer getUser(HttpServletRequest request, @PathVariable("customerId") long customerId) throws ApplicationException{
-		// Will update the company in the DB only if the changes are made by the admin or the same customer.
+	public Customer getCustomerByCustomerId(HttpServletRequest request, @PathVariable("customerId") long customerId) throws ApplicationException{
 		ValidationUtils.ValidateUser(request, customerId);
 		return customerController.getCustomerByCustomerId(customerId);
 	}
