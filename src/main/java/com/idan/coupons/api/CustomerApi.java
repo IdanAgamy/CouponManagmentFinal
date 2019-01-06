@@ -3,7 +3,9 @@ package com.idan.coupons.api;
 
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,6 +20,7 @@ import com.idan.coupons.beans.Customer;
 import com.idan.coupons.controller.CustomerController;
 //import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
+import com.idan.coupons.utils.CookieUtil;
 //import com.idan.coupons.utils.CookieUtil;
 //import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
@@ -88,8 +91,13 @@ public class CustomerApi {
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	//http://localhost:8080/CouponManagmentSystemVer3/customers/
-	public void createCustomer(@RequestBody Customer customer) throws ApplicationException{
-		customerController.createCustomer(customer);
+	public Customer createCustomer(HttpServletRequest request, HttpServletResponse response, @RequestBody Customer customer) throws ApplicationException{
+		customer = customerController.createCustomer(customer);
+		
+		request.getSession();					
+		List<Cookie> loginCookies = CookieUtil.loginCookies(customer);
+		response = CookieUtil.addCookies(response, loginCookies);
+		return customer;
 	}
 
 	/**

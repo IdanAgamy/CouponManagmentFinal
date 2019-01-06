@@ -37,7 +37,7 @@ public class CompanyController {
 	 * @param company - the company as a Company object to add to the DB.
 	 * @throws ApplicationException
 	 */
-	public Company createCompany(HttpServletRequest request, HttpServletResponse response, Company company) throws ApplicationException {
+	public Company createCompany(Company company) throws ApplicationException {
 
 		// Validating company parameters for creating company.
 		validateCreateCompany(company);
@@ -45,11 +45,6 @@ public class CompanyController {
 		// If we didn't catch any exception, we call the 'createCoupon' method.
 		Long companyID = this.companyDao.createCompany(company);
 		company.setCompanyId(companyID);
-		
-		// If company created, registration is complete and creating cookies.
-		request.getSession();					
-		List<Cookie> loginCookies = CookieUtil.loginCookies(company);
-		response = CookieUtil.addCookies(response, loginCookies);
 		
 		return company;
 	}

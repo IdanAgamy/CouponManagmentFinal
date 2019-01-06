@@ -17,13 +17,13 @@ public class LoginUtils {
 		String pageRequest = request.getRequestURL().toString();
 		String pageMethod = request.getMethod();
 		return 	pageRequest.endsWith("/login") || 
-				(pageRequest.endsWith("/coupons") 	 &&  pageMethod.equals("GET")) ||
+				(pageRequest.endsWith("/coupons") 	 &&  (pageMethod.equals("GET") || pageMethod.equals("OPTIONS"))) ||
 				pageRequest.endsWith("/byCouponType") ||
 				pageRequest.endsWith("/upToPrice") ||
 				pageRequest.endsWith("/upToEndDate") ||
 				pageRequest.endsWith("/byCompanyID") ||
-				(pageRequest.endsWith("/customers") &&  pageMethod.equals("POST") ) || 
-				(pageRequest.endsWith("/companies") && (pageMethod.equals("GET") || pageMethod.equals("POST"))) ||
+				(pageRequest.endsWith("/customers") &&  (pageMethod.equals("POST")  || pageMethod.equals("OPTIONS"))) || 
+				(pageRequest.endsWith("/companies") && (pageMethod.equals("GET") || pageMethod.equals("POST") || pageMethod.equals("OPTIONS"))) ||
 				pageRequest.endsWith("/byCompanyName") ||
 				pageRequest.endsWith("/logout");
 	}

@@ -2,6 +2,7 @@ package com.idan.coupons.api;
 
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.idan.coupons.beans.Company;
 import com.idan.coupons.controller.CompanyController;
 import com.idan.coupons.exceptions.ApplicationException;
+import com.idan.coupons.utils.CookieUtil;
 import com.idan.coupons.utils.ValidationUtils;
 
 @CrossOrigin(origins="http://localhost:4200", maxAge = 3600)
@@ -84,7 +86,12 @@ public class CompanyApi {
 	@RequestMapping(method = RequestMethod.POST)
 	public Company createCompany(HttpServletRequest request, HttpServletResponse response, @RequestBody Company company) throws ApplicationException{
 		if (company != null) {
-			company = companyController.createCompany(request, response, company);
+			company = companyController.createCompany(company);
+			
+			// If company created, registration is complete and creating cookies.
+			request.getSession();					
+			List<Cookie> loginCookies = CookieUtil.loginCookies(company);
+			response = CookieUtil.addCookies(response, loginCookies);
 		}
 		return company;
 	}

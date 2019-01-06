@@ -1,13 +1,20 @@
 package com.idan.coupons.controller;
 
 import java.util.ArrayList;
-import java.util.List;import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import com.idan.coupons.beans.Customer;
 import com.idan.coupons.dao.CustomerDao;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.InputErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
+import com.idan.coupons.utils.CookieUtil;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
 
@@ -23,12 +30,15 @@ public class CustomerController {
 	 * @param customer - the customer as a Customer object to add to the DB.
 	 * @throws ApplicationException
 	 */
-	public void createCustomer(Customer customer) throws ApplicationException {
+	public Customer createCustomer(Customer customer) throws ApplicationException {
 		
 		validateCreateCustomer(customer);
 		
 		//If we didn't catch any exception, we call the 'createCoupon' method.
-		this.customerDao.createCustomer(customer);
+		Long customerID = this.customerDao.createCustomer(customer);
+		customer.setCustomerId(customerID);
+		return customer;
+		
 	}
 	
 	/**
