@@ -24,7 +24,8 @@ public class LoginUtils {
 				pageRequest.endsWith("/byCompanyID") ||
 				(pageRequest.endsWith("/customers") &&  pageMethod.equals("POST") ) || 
 				(pageRequest.endsWith("/companies") && (pageMethod.equals("GET") || pageMethod.equals("POST"))) ||
-				pageRequest.endsWith("/byCompanyName");
+				pageRequest.endsWith("/byCompanyName") ||
+				pageRequest.endsWith("/logout");
 	}
 
 }

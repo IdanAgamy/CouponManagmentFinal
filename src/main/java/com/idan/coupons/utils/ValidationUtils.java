@@ -332,10 +332,8 @@ public class ValidationUtils {
 	 */
 	public static void ValidateUser(HttpServletRequest request, Long requestId) throws ApplicationException {
 		// TODO change back
-//		String userType = (String) request.getAttribute("userType");
-//		String userIDstr = (String) request.getAttribute("userID");
-		String userType = (String) request.getHeader("userType");
-		String userIDstr = (String) request.getHeader("userID");
+		String userType = (String) request.getAttribute("userType");
+		String userIDstr = (String) request.getAttribute("userID");
 		Long userID = null;
 		if(userIDstr == null || userType == null) {
 			throw new ApplicationException(ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime()

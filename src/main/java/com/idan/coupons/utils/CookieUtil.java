@@ -54,6 +54,7 @@ public class CookieUtil {
 		List<Cookie> loginCookies = new ArrayList<Cookie>();
 
 		loginCookies.add(new Cookie("userType", UserType.ADMIN.name()));
+		loginCookies.add(new Cookie("userID", "0"));
 
 		return loginCookies;
 	}
@@ -61,11 +62,11 @@ public class CookieUtil {
 	/**
 	 * Adding the cookies to the browser of the client.
 	 * @param response - response that is sent to the client.
-	 * @param loginCookies - List of cookies with the user parameters.
+	 * @param cookies - List of cookies with the user parameters.
 	 * @return
 	 */
-	public static HttpServletResponse addCookies(HttpServletResponse response, List<Cookie> loginCookies) {
-		for(Cookie c:loginCookies) {
+	public static HttpServletResponse addCookies(HttpServletResponse response, List<Cookie> cookies) {
+		for(Cookie c:cookies) {
 			c.setPath("/");
 			c.setMaxAge(30 *60);
 			response.addCookie(c);

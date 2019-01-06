@@ -41,6 +41,7 @@ public class LoginFilter implements Filter{
 		}
 		HttpServletResponse res = (HttpServletResponse) response;
 		res.setStatus(401);
+		System.out.println("access denied");
 		
 	}
 
