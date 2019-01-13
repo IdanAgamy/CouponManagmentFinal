@@ -65,7 +65,7 @@ public class CouponApi {
 	@RequestMapping(method = RequestMethod.POST)
 	//http://localhost:8080/CouponManagmentSystemVer3/coupons
 	public void createCoupon(@RequestBody Coupon coupon) throws ApplicationException {
-		//		System.out.println(coupon);
+				System.out.println(coupon);
 		couponController.createCoupon(coupon);
 	}
 

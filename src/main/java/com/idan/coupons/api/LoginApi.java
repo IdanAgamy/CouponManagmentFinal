@@ -84,6 +84,7 @@ public class LoginApi {
 					List<Cookie> loginCookies = CookieUtil.loginCookies(company);
 					response = CookieUtil.addCookies(response, loginCookies);	
 					userLoginInfo.setUserID(company.getCompanyId());
+					userLoginInfo.setEmail(company.getCompanyEmail());
 					return userLoginInfo;
 				}
 				response.setStatus(401);
@@ -97,6 +98,7 @@ public class LoginApi {
 					List<Cookie> loginCookies = CookieUtil.loginCookies(customer);
 					response = CookieUtil.addCookies(response, loginCookies);
 					userLoginInfo.setUserID(customer.getCustomerId());
+					userLoginInfo.setName(customer.getCustomerName());
 					return userLoginInfo;
 				}
 				response.setStatus(401);
