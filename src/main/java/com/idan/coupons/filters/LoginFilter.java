@@ -28,8 +28,9 @@ public class LoginFilter implements Filter{
 		HttpServletRequest req = (HttpServletRequest) request;		
 		HttpSession session = req.getSession(false);
 		Cookie[] cookies = req.getCookies();
+		String pageMethod = req.getMethod();
 		
-		if(session != null || LoginUtils.isDefaultAccess((HttpServletRequest) request)) {
+		if(session != null || LoginUtils.isDefaultAccess(req) || pageMethod.equals("OPTIONS")) {
 //			Cookie[] cookies = req.getCookies();
 			if (cookies != null) {
 				for (Cookie cookie : cookies) {

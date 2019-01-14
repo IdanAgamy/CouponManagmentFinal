@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -123,11 +124,19 @@ public class CustomerApi {
 	 */
 	@RequestMapping(value ="/{customerId}", method = RequestMethod.DELETE)
 	//http://localhost:8080/CouponManagmentSystemVer3/customers/2
-	public void removeUser(HttpServletRequest request, @PathVariable("customerId") long customerId) throws ApplicationException{
+	public void removeUser(HttpServletRequest request, HttpServletResponse response, @PathVariable("customerId") long customerId) throws ApplicationException{
 		// Will update the customer in the DB only if the changes are made by the admin or the same customer.
 		ValidationUtils.ValidateUser(request, customerId);
 		customerController.removeCustomerByCustomerID(customerId);
-
+		HttpSession session = request.getSession(false);
+		session.invalidate();
+		Cookie[] cookies = request.getCookies();
+		for(Cookie cookie: cookies) {
+		    cookie.setValue("");
+		    cookie.setMaxAge(0);
+		    cookie.setPath("/");
+		    response.addCookie(cookie);
+		}
 	}
 
 	/* Json object

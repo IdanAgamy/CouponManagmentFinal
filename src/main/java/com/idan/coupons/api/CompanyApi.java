@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -117,11 +118,20 @@ public class CompanyApi {
 	 */
 	@RequestMapping(value ="/{companyId}", method = RequestMethod.DELETE)
 	//http://localhost:8080/CouponManagmentSystemVer3/companies/10
-	public void removeUser(HttpServletRequest request, @PathVariable("companyId") long companyId) throws ApplicationException{
+	public void removeUser(HttpServletRequest request, HttpServletResponse response, @PathVariable("companyId") long companyId) throws ApplicationException{
 
 		// Will update the company in the DB only if the changes are made by the admin or the same company.
 		ValidationUtils.ValidateUser(request, companyId);
 		companyController.removeCompanyByCompanyID(companyId);
+		HttpSession session = request.getSession(false);
+		session.invalidate();
+		Cookie[] cookies = request.getCookies();
+		for(Cookie cookie: cookies) {
+		    cookie.setValue("");
+		    cookie.setMaxAge(0);
+		    cookie.setPath("/");
+		    response.addCookie(cookie);
+		}
 	}
 
 
