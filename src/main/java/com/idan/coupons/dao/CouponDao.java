@@ -651,6 +651,47 @@ public class CouponDao{
 		return couponsByCustomer;
 	}
 	
+public List<Coupon> getNewestCoupon() throws ApplicationException{
+		
+		List<Coupon> couponsByCustomer = new ArrayList<Coupon>();
+		
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			// Getting a connection to the DB.
+			connection = JdbcUtils.getConnection();
+
+			// Creating a string which will contain the query.
+			String sql = "SELECT * FROM coupon ORDER BY CouponID DESC LIMIT 5;";	
+			preparedStatement = connection.prepareStatement(sql);
+			
+		
+			
+			resultSet = preparedStatement.executeQuery();
+
+			// Looping on the received result to add to a list of Coupon objects.
+			while (resultSet.next()) {
+				couponsByCustomer.add(extractCouponFromResultSet(resultSet));
+			}
+
+			
+		}
+
+		catch (SQLException e) {
+			e.printStackTrace();
+//			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
+			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, getCouponsByCustomerID(); FAILED");
+		}
+
+		finally {
+			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+		}
+		
+		return couponsByCustomer;
+	}
+	
 	/**
 	 * Sending a query to the DB to add coupon to a customer in customer_coupon table after the customer has bought a coupon.
 	 * @param customerID - Long parameter of the customer ID.

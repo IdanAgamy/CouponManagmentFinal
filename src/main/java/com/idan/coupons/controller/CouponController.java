@@ -271,6 +271,17 @@ public class CouponController {
 		
 	}
 	
+	public List<Coupon> getNewestCoupon() throws ApplicationException{
+		List<Coupon> coupons = couponDao.getNewestCoupon();
+		
+		if(coupons.isEmpty()) {
+			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
+					+" No coupons in data base.");
+		}
+		
+		return coupons;
+	}
+	
 	/**
 	 * Adding a coupon-customer relation after customer bought a coupon.
 	 * @param customerID - Long parameter of the customer ID.

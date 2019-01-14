@@ -20,6 +20,7 @@ public class LoginUtils {
 				(pageRequest.endsWith("/coupons") 	 &&  (pageMethod.equals("GET"))) ||
 				pageRequest.endsWith("/byCouponType") ||
 				pageRequest.endsWith("/upToPrice") ||
+				pageRequest.endsWith("/newest") ||
 				pageRequest.endsWith("/upToEndDate") ||
 				pageRequest.endsWith("/byCompanyID") ||
 				(pageRequest.endsWith("/customers") &&  (pageMethod.equals("POST") )) || 

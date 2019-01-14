@@ -113,13 +113,17 @@ public class LoginApi {
 	@RequestMapping(value ="/logout", method = RequestMethod.GET)
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession(false);
-		session.invalidate();
+		if( session != null) {
+			session.invalidate();
+		}
 		Cookie[] cookies = request.getCookies();
-		for(Cookie cookie: cookies) {
-		    cookie.setValue("");
-		    cookie.setMaxAge(0);
-		    cookie.setPath("/");
-		    response.addCookie(cookie);
+		if(cookies != null) {
+			for(Cookie cookie: cookies) {
+				cookie.setValue("");
+				cookie.setMaxAge(0);
+				cookie.setPath("/");
+				response.addCookie(cookie);
+			}
 		}
 	}
 	

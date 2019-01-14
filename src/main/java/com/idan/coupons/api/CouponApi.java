@@ -109,16 +109,17 @@ public class CouponApi {
 	 */
 	@RequestMapping(value ="/{couponId}/buyCoupon", method = RequestMethod.POST)
 	//http://localhost:8080/CouponManagmentSystemVer3/coupons/3/buyCoupon
-	public void buyCoupon(HttpServletRequest request, @PathVariable("couponId") Long couponID) throws ApplicationException{
+	public Long buyCoupon(HttpServletRequest request, @PathVariable("couponId") Long couponID) throws ApplicationException{
 
 		String customerIDStr = (String) request.getAttribute("userID");
 		if(customerIDStr != null) {
 			Long customerID = Long.valueOf(customerIDStr);
 			couponController.buyCoupon(customerID, couponID);
+			return couponID;
 		}
 		else {
-			throw new ApplicationException(ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime()
-					+" System error, problem with cookies.");
+			throw new ApplicationException(ErrorType.COOKIES_LOST, DateUtils.getCurrentDateAndTime()
+					+" problem with cookies.");
 		}
 	}
 
@@ -132,17 +133,17 @@ public class CouponApi {
 	//http://localhost:8080/CouponManagmentSystemVer3/coupons/3/removeBoughtCoupon
 	public void removeBoughtCoupon(HttpServletRequest request, @PathVariable("couponId") Long couponID) throws ApplicationException {
 
-//		String customerIDStr = (String) request.getAttribute("userID");
-//		if(customerIDStr != null) {
-//			Long customerID = Long.valueOf(customerIDStr);
-//			couponController.removeBoughtCouponByCouponIDandCustomerID(couponID, customerID);
-//		}
-//		else {
-//			throw new ApplicationException(ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime()
-//					+" System error, problem with cookies.");
-//		}
+		String customerIDStr = (String) request.getAttribute("userID");
+		if(customerIDStr != null) {
+			Long customerID = Long.valueOf(customerIDStr);
+			couponController.removeBoughtCouponByCouponIDandCustomerID(couponID, customerID);
+		}
+		else {
+			throw new ApplicationException(ErrorType.COOKIES_LOST, DateUtils.getCurrentDateAndTime()
+					+" problem with cookies.");
+		}
 		
-		couponController.removeBoughtCouponByCouponIDandCustomerID(couponID, 2L);
+//		couponController.removeBoughtCouponByCouponIDandCustomerID(couponID, 2L);
 	}
 
 	/**
@@ -220,9 +221,17 @@ public class CouponApi {
 			return couponController.getCouponsByCustomerID(customerID);
 		}
 		else {
-			throw new ApplicationException(ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime()
-					+" System error, problem with cookies.");
+			throw new ApplicationException(ErrorType.COOKIES_LOST, DateUtils.getCurrentDateAndTime()
+					+" problem with cookies.");
 		}
+	}
+	
+	@RequestMapping(value ="/newest", method = RequestMethod.GET)
+	//http://localhost:8080/CouponManagmentSystemVer3/coupons/newest
+	public List<Coupon> getNewestCoupon() throws ApplicationException{
+		List<Coupon> coupons = couponController.getNewestCoupon();
+		//System.out.println(coupons);
+		return coupons;
 	}
 
 

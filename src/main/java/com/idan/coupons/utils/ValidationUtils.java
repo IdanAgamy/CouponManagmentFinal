@@ -331,13 +331,13 @@ public class ValidationUtils {
 	 * @throws ApplicationException
 	 */
 	public static void ValidateUser(HttpServletRequest request, Long requestId) throws ApplicationException {
-		// TODO change back
+		
 		String userType = (String) request.getAttribute("userType");
 		String userIDstr = (String) request.getAttribute("userID");
 		Long userID = null;
 		if(userIDstr == null || userType == null) {
-			throw new ApplicationException(ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime()
-					+" System error, problem with cookies.");
+			throw new ApplicationException(ErrorType.COOKIES_LOST, DateUtils.getCurrentDateAndTime()
+					+" problem with cookies.");
 		}
 
 		userID = Long.parseLong(userIDstr);

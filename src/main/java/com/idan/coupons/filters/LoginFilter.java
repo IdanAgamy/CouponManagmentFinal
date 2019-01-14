@@ -24,7 +24,7 @@ public class LoginFilter implements Filter{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		
-		System.out.println("in filter");
+//		System.out.println("in filter");
 		HttpServletRequest req = (HttpServletRequest) request;		
 		HttpSession session = req.getSession(false);
 		Cookie[] cookies = req.getCookies();

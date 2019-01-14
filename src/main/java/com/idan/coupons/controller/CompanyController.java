@@ -93,7 +93,7 @@ public class CompanyController {
 		
 		if(company == null) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No company with ID" + companyId + ".");
+					+" No company with ID: " + companyId + ".");
 		}
 		
 		return company;
@@ -110,14 +110,14 @@ public class CompanyController {
 
 		if (!ValidationUtils.isValidNameFormat(companyName)) {
 			throw new ApplicationException(ErrorType.INVALID_PARAMETER, DateUtils.getCurrentDateAndTime()
-					+" Not valid name format" + companyName + ".");
+					+" Not valid name format " + companyName + ".");
 		}
 		
 		Company company = companyDao.getCompanyByComapnyName(companyName);
 		
 		if (company == null) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No company with name" + companyName + ".");
+					+" No company with name " + companyName + ".");
 		}
 		
 		return company;
@@ -220,7 +220,7 @@ public class CompanyController {
 		}
 		
 		if (this.companyDao.isCompanyExistByEmail(company.getCompanyEmail())) {
-			throw new ApplicationException(ErrorType.NAME_IS_ALREADY_EXISTS, DateUtils.getCurrentDateAndTime()
+			throw new ApplicationException(ErrorType.EMAIL_IS_ALREADY_EXISTS, DateUtils.getCurrentDateAndTime()
 					+" Create company has failed."
 					+"\nThe user attempted to create a new company using an Email that is already in use."
 					+"\nCustomer Email="+company.getCompanyEmail());

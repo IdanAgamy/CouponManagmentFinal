@@ -12,7 +12,8 @@ public enum ErrorType {
 	NAME_IS_ALREADY_EXISTS(608), 
 	EMAIL_IS_ALREADY_EXISTS(609),
 	NO_RETURN_OBJECT(620), 
-	BAD_INPUT(621);
+	BAD_INPUT(621),
+	COOKIES_LOST(622);
 	
 	private int number;
 	

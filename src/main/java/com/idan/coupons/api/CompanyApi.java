@@ -106,7 +106,7 @@ public class CompanyApi {
 	@RequestMapping(method = RequestMethod.PUT)
 	public void updateUser (HttpServletRequest request,@RequestBody  Company company) throws ApplicationException{
 		// Will update the company in the DB only if the changes are made by the admin or the same company.
-//		ValidationUtils.ValidateUser(request, company.getCompanyId());
+		ValidationUtils.ValidateUser(request, company.getCompanyId());
 		companyController.updateCompany(company);
 	}
 
