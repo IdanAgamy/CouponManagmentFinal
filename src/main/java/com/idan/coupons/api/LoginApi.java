@@ -66,7 +66,7 @@ public class LoginApi {
 		System.out.println(userLoginInfo);
 		if (userLoginInfo != null) {
 			// Validating the admin login.
-			if(userLoginInfo.getUserType() == UserType.ADMIN && userLoginInfo.getName().equals("admin") && userLoginInfo.getPassword().equals("12341234") && userLoginInfo.getEmail().equals("admin@coupons")) {
+			if(userLoginInfo.getUserType() == UserType.ADMIN && userLoginInfo.getName().equals("admin") && userLoginInfo.getPassword().equals("qwer1234") && userLoginInfo.getEmail().equals("admin@coupons")) {
 				request.getSession();
 				// Adding cookies for admin.
 				List<Cookie> loginCookies = CookieUtil.loginCookies();
