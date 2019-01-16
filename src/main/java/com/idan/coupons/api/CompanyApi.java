@@ -21,7 +21,7 @@ import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.CookieUtil;
 import com.idan.coupons.utils.ValidationUtils;
 
-@CrossOrigin(origins="http://localhost:4200", maxAge = 3600)
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 @RequestMapping("/companies")
 public class CompanyApi {
