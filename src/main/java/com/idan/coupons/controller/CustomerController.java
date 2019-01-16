@@ -84,7 +84,7 @@ public class CustomerController {
 		Customer customer = this.customerDao.getCustomerByCustomerId(customerID);
 		if (customer == null) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No customer with ID" + customerID + ".");
+					+" No customer with ID " + customerID + ".");
 		}
 		
 		return customer;
@@ -99,14 +99,14 @@ public class CustomerController {
 	public List<Customer> getCustomersByCustomerName(String customerName) throws ApplicationException {
 		if (!ValidationUtils.isValidNameFormat(customerName)) {
 			throw new ApplicationException(ErrorType.INVALID_PARAMETER, DateUtils.getCurrentDateAndTime()
-					+" Not valid name format" + customerName + ".");
+					+" Not valid name format " + customerName + ".");
 		}
 		
 		List<Customer> customers = customerDao.getCustomersByCustomerName(customerName);
 		
 		if (customers.isEmpty()) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No customer with name" + customerName + ".");
+					+" No customer with name " + customerName + ".");
 		}
 		
 		return customers;
@@ -121,14 +121,14 @@ public class CustomerController {
 	public Customer getCustomerByCustomerEmail(String customerEmail) throws ApplicationException {
 		if (!ValidationUtils.isValidEmailFormat(customerEmail)) {
 			throw new ApplicationException(ErrorType.INVALID_PARAMETER, DateUtils.getCurrentDateAndTime()
-					+" Not valid name format" + customerEmail + ".");
+					+" Not valid email format " + customerEmail + ".");
 		}
 		
 		Customer customer = customerDao.getCustomerByCustomerEmail(customerEmail);
 		
 		if (customer == null) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No customer with name" + customerEmail + ".");
+					+" No customer with email " + customerEmail + ".");
 		}
 		
 		return customer;

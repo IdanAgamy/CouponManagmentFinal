@@ -286,7 +286,7 @@ public class ValidationUtils {
 			return false;
 		}
 		
-		return str.length() >= 100;
+		return str.length() >= 50;
 		
 	}
 	
