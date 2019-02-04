@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 //import com.idan.coupons.beans.Company;
 import com.idan.coupons.beans.CompanyEntity;
 import com.idan.coupons.beans.Customer;
+import com.idan.coupons.beans.CustomerEntity;
 import com.idan.coupons.beans.UserLoginInfo;
 import com.idan.coupons.controller.CompanyController;
 import com.idan.coupons.controller.CustomerController;
@@ -34,24 +35,6 @@ public class LoginApi {
 	@Autowired
 	CustomerController customerController;
 	
-	/**
-	 * method for debugging purpose only
-	 * TODO - delete method
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public void hhhyy(HttpServletRequest request) {
-		
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie c : cookies) {
-				System.out.println(c.getName() + " " + c.getValue());
-
-			} 
-		}
-		
-		HttpSession session = request.getSession(false);
-		System.out.println(session);
-	}
 	
 	/**
 	 * logging in to the web site.
@@ -93,7 +76,7 @@ public class LoginApi {
 			}
 			// Validating a customer login.
 			if(userLoginInfo.getUserType() == UserType.CUSTOMER) {
-				Customer customer = customerController.login(userLoginInfo.getEmail(), userLoginInfo.getPassword());
+				CustomerEntity customer = customerController.login(userLoginInfo.getEmail(), userLoginInfo.getPassword());
 				if(customer != null) {
 					request.getSession();	
 					List<Cookie> loginCookies = CookieUtil.loginCookies(customer);

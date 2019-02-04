@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.idan.coupons.beans.Customer;
+import com.idan.coupons.beans.CustomerEntity;
 import com.idan.coupons.controller.CustomerController;
 //import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
@@ -55,7 +56,7 @@ public class CustomerApi {
 	 */
 	@RequestMapping(value ="/{customerId}", method = RequestMethod.GET)
 	//http://localhost:8080/CouponManagmentSystemVer3/customers/2
-	public Customer getCustomerByCustomerId(HttpServletRequest request, @PathVariable("customerId") long customerId) throws ApplicationException{
+	public CustomerEntity getCustomerByCustomerId(HttpServletRequest request, @PathVariable("customerId") long customerId) throws ApplicationException{
 		ValidationUtils.ValidateUser(request, customerId);
 		return customerController.getCustomerByCustomerId(customerId);
 	}
@@ -92,8 +93,8 @@ public class CustomerApi {
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	//http://localhost:8080/CouponManagmentSystemVer3/customers/
-	public Customer createCustomer(HttpServletRequest request, HttpServletResponse response, @RequestBody Customer customer) throws ApplicationException{
-		customer = customerController.createCustomer(customer);
+	public CustomerEntity createCustomer(HttpServletRequest request, HttpServletResponse response, @RequestBody CustomerEntity customer) throws ApplicationException{
+		customerController.createCustomer(customer);
 		
 		request.getSession();					
 		List<Cookie> loginCookies = CookieUtil.loginCookies(customer);
@@ -109,7 +110,7 @@ public class CustomerApi {
 	 */
 	@RequestMapping(method = RequestMethod.PUT)
 	//http://localhost:8080/CouponManagmentSystemVer3/customers/
-	public void updateUser (HttpServletRequest request,@RequestBody  Customer customer) throws ApplicationException{
+	public void updateUser (HttpServletRequest request,@RequestBody  CustomerEntity customer) throws ApplicationException{
 		// Will update the customer in the DB only if the changes are made by the admin or the same customer.
 		Long customerID = customer.getCustomerId();
 		ValidationUtils.ValidateUser(request, customerID);

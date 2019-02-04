@@ -18,10 +18,6 @@ import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 
-//import com.mysql.cj.Query;
-
-//TODO implement Transactional
-
 @Repository
 public class CompanyDao{
 
@@ -173,18 +169,18 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public CompanyEntity login (String companyName, String companyPasword) throws ApplicationException {
-		CompanyEntity company;
+		
 		try {
 			Query loginQuery = entityManager.createQuery("SELECT company FROM CompanyEntity as company WHERE companyName =:companyNameObj AND companyPassword =:companyPasswordObj");
 			loginQuery.setParameter("companyNameObj", companyName);
 			loginQuery.setParameter("companyPasswordObj", companyPasword);
-			company = (CompanyEntity) loginQuery.getSingleResult();
+			CompanyEntity company = (CompanyEntity) loginQuery.getSingleResult();
+			return company;		
 		} catch (NoResultException e) {
 			return null;
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, login(); FAILED");
 		}
-		return company;		
 	}
 	
 	/**

@@ -33,7 +33,7 @@ public class CompanyController {
 	 * @param company - the company as a Company object to add to the DB.
 	 * @throws ApplicationException
 	 */
-	public CompanyEntity createCompany(CompanyEntity company) throws ApplicationException {
+	public void createCompany(CompanyEntity company) throws ApplicationException {
 
 		// Validating company parameters for creating company.
 		validateCreateCompany(company);
@@ -41,7 +41,6 @@ public class CompanyController {
 		// If we didn't catch any exception, we call the 'createCoupon' method.
 		this.companyDao.createCompany(company);
 		
-		return company;
 	}
 	
 	/**

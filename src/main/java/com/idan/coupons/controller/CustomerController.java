@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import com.idan.coupons.beans.Customer;
+import com.idan.coupons.beans.CustomerEntity;
 import com.idan.coupons.dao.CustomerDao;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.InputErrorType;
@@ -30,14 +31,15 @@ public class CustomerController {
 	 * @param customer - the customer as a Customer object to add to the DB.
 	 * @throws ApplicationException
 	 */
-	public Customer createCustomer(Customer customer) throws ApplicationException {
+	public void createCustomer(CustomerEntity customer) throws ApplicationException {
 		
 		validateCreateCustomer(customer);
 		
 		//If we didn't catch any exception, we call the 'createCoupon' method.
-		Long customerID = this.customerDao.createCustomer(customer);
-		customer.setCustomerId(customerID);
-		return customer;
+//		Long customerID = this.customerDao.createCustomer(customer);
+		this.customerDao.createCustomer(customer);
+//		customer.setCustomerId(customerID);
+//		return customer;
 		
 	}
 	
@@ -61,7 +63,7 @@ public class CustomerController {
 	 * @param customer
 	 * @throws ApplicationException
 	 */
-	public void updateCustomer(Customer customer) throws ApplicationException {
+	public void updateCustomer(CustomerEntity customer) throws ApplicationException {
 		
 		validateUpdateCustomer(customer);
 		
@@ -76,18 +78,13 @@ public class CustomerController {
 	 * @return Customer object of the requested customer.
 	 * @throws ApplicationException
 	 */
-	public Customer getCustomerByCustomerId(Long customerID) throws ApplicationException {
+	public CustomerEntity getCustomerByCustomerId(Long customerID) throws ApplicationException {
 		if(customerID==null) {
 			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
 					+"  Bad input inserted, null value.");
 		}
-		Customer customer = this.customerDao.getCustomerByCustomerId(customerID);
-		if (customer == null) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No customer with ID " + customerID + ".");
-		}
+		return this.customerDao.getCustomerByCustomerId(customerID);
 		
-		return customer;
 	}
 	
 	/**
@@ -159,11 +156,12 @@ public class CustomerController {
 	 * @return The company object that fits the parameters.
 	 * @throws ApplicationException
 	 */
-	public Customer login (String customerEmail, String customerPassword) throws ApplicationException {
+	public CustomerEntity login (String customerEmail, String customerPassword) throws ApplicationException {
 		
-		validateCustomer(new Customer("Valid Name", customerPassword, customerEmail));
+		validateCustomer(new CustomerEntity("Valid Name", customerPassword, customerEmail));
 		
 		return this.customerDao.login(customerEmail, customerPassword);
+		
 	}
 
 	/**
@@ -171,7 +169,7 @@ public class CustomerController {
 	 * @param customer - customer object to validate.
 	 * @throws ApplicationException
 	 */
-	private void validateUpdateCustomer(Customer customer) throws ApplicationException {
+	private void validateUpdateCustomer(CustomerEntity customer) throws ApplicationException {
 
 		validateCustomer(customer);
 		
@@ -189,7 +187,7 @@ public class CustomerController {
 	 * @param customer - customer object to validate.
 	 * @throws ApplicationException
 	 */
-	private void validateCreateCustomer(Customer customer) throws ApplicationException {
+	private void validateCreateCustomer(CustomerEntity customer) throws ApplicationException {
 
 		validateCustomer(customer);
 		
@@ -207,7 +205,7 @@ public class CustomerController {
 	 * @param customer - customer object to validate.
 	 * @throws ApplicationException
 	 */
-	private void validateCustomer(Customer customer) throws ApplicationException {
+	private void validateCustomer(CustomerEntity customer) throws ApplicationException {
 
 		List<InputErrorType> errorTypes = new ArrayList<InputErrorType>();
 		

@@ -88,7 +88,7 @@ public class CompanyApi {
 	@RequestMapping(method = RequestMethod.POST)
 	public CompanyEntity createCompany(HttpServletRequest request, HttpServletResponse response, @RequestBody CompanyEntity company) throws ApplicationException{
 		if (company != null) {
-			company = companyController.createCompany(company);
+			companyController.createCompany(company);
 			
 			// If company created, registration is complete and creating cookies.
 			request.getSession();					

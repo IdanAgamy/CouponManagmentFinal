@@ -1,10 +1,27 @@
 package com.idan.coupons.beans;
 
-public class Customer{
-	
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="Customer")
+public class CustomerEntity {
+
+	@GeneratedValue
+	@Id
+	@Column(name="CustomerID", nullable=false)
 	private Long customerId;
+	
+	@Column(name="CustomerName", nullable=false)
 	private String customerName;
+
+	@Column(name="CustomerPassword", nullable=false)
 	private String customerPassword;
+
+	@Column(name="CustomerEmail", nullable=false)
 	private String customerEmail;
 	
 	public Long getCustomerId() {
@@ -31,14 +48,14 @@ public class Customer{
 	public void setCustomerEmail(String customerEmail) {
 		this.customerEmail = customerEmail;
 	}
-	public Customer() {
+	public CustomerEntity() {
 	}
-	public Customer(String customerName, String customerPassword, String customerEmail) {
+	public CustomerEntity(String customerName, String customerPassword, String customerEmail) {
 		this.customerName = customerName;
 		this.customerPassword = customerPassword;
 		this.customerEmail = customerEmail;
 	}
-	public Customer(Long customerId, String customerName, String customerPassword, String customerEmail) {
+	public CustomerEntity(Long customerId, String customerName, String customerPassword, String customerEmail) {
 		this.customerId = customerId;
 		this.customerName = customerName;
 		this.customerPassword = customerPassword;
@@ -50,15 +67,11 @@ public class Customer{
 		return "Customer [customerId=" + customerId + ", customerName=" + customerName + ", customerPassword="
 				+ customerPassword + ", customerEmail=" + customerEmail + "]";
 	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((customerEmail == null) ? 0 : customerEmail.hashCode());
 		result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
-		result = prime * result + ((customerName == null) ? 0 : customerName.hashCode());
-		result = prime * result + ((customerPassword == null) ? 0 : customerPassword.hashCode());
 		return result;
 	}
 	@Override
@@ -69,31 +82,15 @@ public class Customer{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Customer other = (Customer) obj;
-		if (customerEmail == null) {
-			if (other.customerEmail != null)
-				return false;
-		} else if (!customerEmail.equals(other.customerEmail))
-			return false;
+		CustomerEntity other = (CustomerEntity) obj;
 		if (customerId == null) {
 			if (other.customerId != null)
 				return false;
 		} else if (!customerId.equals(other.customerId))
 			return false;
-		if (customerName == null) {
-			if (other.customerName != null)
-				return false;
-		} else if (!customerName.equals(other.customerName))
-			return false;
-		if (customerPassword == null) {
-			if (other.customerPassword != null)
-				return false;
-		} else if (!customerPassword.equals(other.customerPassword))
-			return false;
 		return true;
 	}
-	
-	
+
 	
 
 }
