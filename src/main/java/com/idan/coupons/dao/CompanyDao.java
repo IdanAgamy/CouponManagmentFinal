@@ -1,14 +1,10 @@
 package com.idan.coupons.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-//import java.sql.Statement;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -16,12 +12,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.idan.coupons.beans.Company;
+
 import com.idan.coupons.beans.CompanyEntity;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
-import com.idan.coupons.utils.JdbcUtils;
+
 //import com.mysql.cj.Query;
 
 //TODO implement Transactional
@@ -93,6 +89,9 @@ public class CompanyDao{
 		
 		try {
 			return entityManager.find(CompanyEntity.class, companyId);
+		} catch (NoResultException e) {
+			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
+					+" No company with ID: " + companyId + ".");
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getCompanyByComapnyId(); FAILED");
 		}
@@ -113,6 +112,9 @@ public class CompanyDao{
 			Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyName = :CompanyNameObj ");
 			getQuery.setParameter("CompanyNameObj", companyName);
 			company = (CompanyEntity) getQuery.getSingleResult();
+		} catch (NoResultException e) {
+			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
+					+" No company with name: " + companyName + ".");
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getCompanyByComapnyName(); FAILED");
 		}
@@ -132,6 +134,9 @@ public class CompanyDao{
 			Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyEmail = :companyEmailObj ");
 			getQuery.setParameter("companyEmailObj", companyEmail);
 			company = (CompanyEntity) getQuery.getSingleResult();
+		} catch (NoResultException e) {
+			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
+					+" No company with email: " + companyEmail + ".");
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in getCompanyByComapnyEmail, getCompanyByComapnyName(); FAILED");
 		}
@@ -143,12 +148,16 @@ public class CompanyDao{
 	 * @return List collection of all the companies in the company table.
 	 * @throws ApplicationException.
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional(propagation=Propagation.REQUIRED)
 	public List<CompanyEntity> getAllCompanies() throws ApplicationException{
 		List<CompanyEntity> companies;
 		try {
-			Query getQuery = entityManager.createQuery("SELECT company FROM companyEntity As company");
+			Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company");
 			companies = getQuery.getResultList();
+		} catch (NoResultException e) {
+			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
+					+"  No companies in data base.");
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getAllCompanies(); FAILED");
 		}
@@ -170,6 +179,8 @@ public class CompanyDao{
 			loginQuery.setParameter("companyNameObj", companyName);
 			loginQuery.setParameter("companyPasswordObj", companyPasword);
 			company = (CompanyEntity) loginQuery.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, login(); FAILED");
 		}
@@ -185,44 +196,22 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCompanyExistByEmail(String companyEmail) throws ApplicationException {
-//		Connection connection = null;
-//		PreparedStatement preparedStatement = null;
-//		ResultSet resultSet = null;
 		
 		try {
-			Query verifyQUey = entityManager.createQuery("SELECT company FROM CompanyEntity WHERE companyEmail = :companyEmailObj ");
-			verifyQUey.setParameter("companyEmailObj", companyEmail);
-			CompanyEntity company = (CompanyEntity) verifyQUey.getSingleResult();
-			if (company == null) {
-				return false;
-			}
-//			// Getting a connection to the DB.
-//			connection = JdbcUtils.getConnection();
-//			
-//			// Creating a string which will contain the query.
-//			String sql = "SELECT * FROM company WHERE companyEmail = ? ";
-//			preparedStatement = connection.prepareStatement(sql);
-//			
-//			preparedStatement.setString(1, companyEmail);
-//			
-//			resultSet = preparedStatement.executeQuery();
-//			
-//			// Checking if we got a reply with the requested data. If no data was received, returns true.
-//			if (!resultSet.next()) {
-//				return false;
-//			}
-//			
+			Query verifyQUey = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyEmail = :companyEmailObj");
+			verifyQUey.setParameter("companyEmailObj", companyEmail);			
+			verifyQUey.getSingleResult();
+			
+			// If a company with email exist in DB, return true.
 			return true;
+		} catch (NoResultException e) {
+		//	In case of no result exception, no company with this email exist, return false.
+			return false;
 		}
-		
 		catch (Exception e) {
-//		In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
+		//	In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, isCompanyExistByEmail(); FAILED");
-		}
-//		
-//		finally {
-//			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-//		}
+		} 
 	}
 	
 	/**
@@ -235,39 +224,21 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCompanyEmailExistForUpdate(Long companyID, String companyEmail) throws ApplicationException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		
+
 		try {
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM company WHERE companyEmail = ? AND NOT CompanyID = ?; ";
-			preparedStatement = connection.prepareStatement(sql);
-			
-			preparedStatement.setString(1, companyEmail);
-			preparedStatement.setLong(2, companyID);
-	
-			resultSet = preparedStatement.executeQuery();
-			
-			// Checking if we got a reply with the requested data. If no data was received, returns true.
-			if (!resultSet.next()) {
-				return false;
-			}
+			Query verifyQUey = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyEmail = :companyEmailObj AND NOT companyId = :companuIdObj");
+			verifyQUey.setParameter("companyEmailObj", companyEmail);		
+			verifyQUey.setParameter("companuIdObj", companyID);	
+			verifyQUey.getSingleResult();
 			
 			return true;
-		}
-		
-		catch (SQLException e) {
-			e.printStackTrace();
+		} catch (NoResultException e) {
+		//	In case of no result exception, no other company with this email exist, return false.
+			return false;
+		}	
+		catch (Exception e) {
 //		In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, isCouponTitleUpdateAvailable(); FAILED");
-		}
-		
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
 		}
 	}
 	
@@ -280,38 +251,24 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCompanyExistByName(String companyName) throws ApplicationException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
 		
 		try {
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
+			Query verifyQUey = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyName = :companyNameObj");
+			verifyQUey.setParameter("companyNameObj", companyName);			
+			verifyQUey.getSingleResult();
 			
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM company WHERE companyName = ? ";
-			preparedStatement = connection.prepareStatement(sql);
-			
-			preparedStatement.setString(1, companyName);
-
-			resultSet = preparedStatement.executeQuery();
-			
-			// Checking if we got a reply with the requested data. If no data was received, returns true.
-			if (!resultSet.next()) {
-				return false;
-			}
-			
+			// If a company with name exist in DB, return true.
 			return true;
+			
 		}
-		
-		catch (SQLException e) {
+		catch (NoResultException e) {
+			//	In case of no result exception, no other company with this name exist, return false.
+			return false;
+		}	
+		catch (Exception e) {
 			e.printStackTrace();
 //		In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, isCompanyExistByName(); FAILED");
-		}
-		
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
 		}
 	}
 	
@@ -325,39 +282,23 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCompanyNameExistForUpdate(long companyID, String companyName) throws ApplicationException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		
-		try {
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM company WHERE companyName = ? AND NOT CompanyID = ?; ";
-			preparedStatement = connection.prepareStatement(sql);
-			
-			preparedStatement.setString(1, companyName);
-			preparedStatement.setLong(2, companyID);
 
-			resultSet = preparedStatement.executeQuery();
-			
-			// Checking if we got a reply with the requested data. If no data was received, returns true.
-			if (!resultSet.next()) {
-				return false;
-			}
+		try {
+			Query verifyQUey = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyName = :companyNameObj AND NOT companyId = :companuIdObj");
+			verifyQUey.setParameter("companyNameObj", companyName);		
+			verifyQUey.setParameter("companuIdObj", companyID);	
+			verifyQUey.getSingleResult();
 			
 			return true;
 		}
-		
-		catch (SQLException e) {
-			e.printStackTrace();
-//		In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, isCouponTitleUpdateAvailable(); FAILED");
+		catch (NoResultException e) {
+			//	In case of no result exception, no other company with this name exist, return false.
+			return false;
 		}
 		
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+		catch (Exception e) {
+//		In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
+			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, isCouponTitleUpdateAvailable(); FAILED");
 		}
 	}
 	

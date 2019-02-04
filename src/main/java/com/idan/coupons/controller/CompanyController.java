@@ -36,7 +36,7 @@ public class CompanyController {
 	public CompanyEntity createCompany(CompanyEntity company) throws ApplicationException {
 
 		// Validating company parameters for creating company.
-//		validateCreateCompany(company);
+		validateCreateCompany(company);
 		
 		// If we didn't catch any exception, we call the 'createCoupon' method.
 		this.companyDao.createCompany(company);
@@ -67,7 +67,7 @@ public class CompanyController {
 	public void updateCompany(CompanyEntity company) throws ApplicationException {
 		
 		//Validating company parameters for updating company.
-//		validateUpdateCompany(company);
+		validateUpdateCompany(company);
 		
 		this.companyDao.updateCompany(company);
 		
@@ -169,7 +169,7 @@ public class CompanyController {
 	 */
 	public CompanyEntity login (String companyName, String companyPasword) throws ApplicationException {
 		
-		validateCompany(new Company(companyName, companyPasword, "valid@email"));
+		validateCompany(new CompanyEntity(companyName, companyPasword, "valid@email"));
 		
 		return this.companyDao.login(companyName, companyPasword);
 		
@@ -180,10 +180,10 @@ public class CompanyController {
 	 * @param company - company object to validate.
 	 * @throws ApplicationException
 	 */
-	private void validateUpdateCompany(Company company) throws ApplicationException {
+	private void validateUpdateCompany(CompanyEntity company) throws ApplicationException {
 		validateCompany(company);
 		
-		if (this.companyDao.isCompanyNameExistForUpdate(company.getCompanyId(), company.getCompanyEmail())) {
+		if (this.companyDao.isCompanyNameExistForUpdate(company.getCompanyId(), company.getCompanyName())) {
 			throw new ApplicationException(ErrorType.NAME_IS_ALREADY_EXISTS, DateUtils.getCurrentDateAndTime()
 					+" Update company has failed."
 					+"\nThe user attempted to update a company using a name that is already in use."
@@ -203,7 +203,7 @@ public class CompanyController {
 	 * @param company - company object to validate.
 	 * @throws ApplicationException
 	 */
-	private void validateCreateCompany(Company company) throws ApplicationException {
+	private void validateCreateCompany(CompanyEntity company) throws ApplicationException {
 
 		validateCompany(company);
 		
@@ -229,7 +229,7 @@ public class CompanyController {
 	 * @param company - company object to validate.
 	 * @throws ApplicationException
 	 */
-	private void validateCompany(Company company) throws ApplicationException {
+	private void validateCompany(CompanyEntity company) throws ApplicationException {
 		
 		
 		List<InputErrorType> errorTypes = new ArrayList<InputErrorType>();		
