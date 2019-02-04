@@ -6,12 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import com.idan.coupons.beans.Company;
 import com.idan.coupons.beans.CompanyEntity;
-//import com.idan.coupons.beans.Customer;
 import com.idan.coupons.dao.CompanyDao;
-//import com.idan.coupons.dao.CouponDao;
-//import com.idan.coupons.dao.CustomerDao;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.InputErrorType;
 import com.idan.coupons.exceptions.ApplicationException;

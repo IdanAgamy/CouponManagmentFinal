@@ -62,34 +62,14 @@ public class CustomerDao{
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void removeCustomerByCustomerID(Long customerID) throws ApplicationException {
 		
-//		Connection connection = null;
-//		PreparedStatement preparedStatement = null;
 		CustomerEntity customer = getCustomerByCustomerId(customerID);
 		try {
-			entityManager.remove(customer);
-//			// Getting a connection to the DB
-//			connection = JdbcUtils.getConnection();
-//			
-//			// Creating a string which will contain the query
-//			String sql = "DELETE FROM customer WHERE CustomerID = ?;";
-//			preparedStatement = connection.prepareStatement(sql);
-//			
-//			preparedStatement.setLong(1, customerID);
-//			
-//		
-//			
-//			preparedStatement.executeUpdate();
-//			
-//			
-			
+			entityManager.remove(customer);	
 		}
 		catch (Exception e) {
 //				In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CustomerDao, removeCustomer(); FAILED");
 		}
-//		finally {
-//			JdbcUtils.closeResources(connection, preparedStatement);
-//		}
 		
 	}
 	
@@ -103,39 +83,15 @@ public class CustomerDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void updateCustomer(CustomerEntity customer) throws ApplicationException {
-//			
-//			Connection connection = null;
-//			PreparedStatement preparedStatement = null;
-//	
+
 			try {
 				entityManager.merge(customer);
-//				// Getting a connection to the DB
-//				connection = JdbcUtils.getConnection();
-//				
-//				// Creating a string which will contain the query
-//				String sql = "UPDATE customer SET CustomerName = ?, CustomerPassword = ?, CustomerEmail = ? WHERE CustomerID = ?";
-//				preparedStatement = connection.prepareStatement(sql);
-//				
-//				preparedStatement.setString(1, customer.getCustomerName());
-//				preparedStatement.setString(2, customer.getCustomerPassword());
-//				preparedStatement.setString(3, customer.getCustomerEmail());
-//				preparedStatement.setLong(4, customer.getCustomerId());
-//				
-//			
-//				
-//				preparedStatement.executeUpdate();
-//				
 			}
 	
 			catch (Exception e) {
 //				In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 				throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CustomerDao, creatCompany(); FAILED");
 				}
-//	
-//			finally {
-//				JdbcUtils.closeResources(connection, preparedStatement);
-//			}
-			
 		}
 
 
@@ -167,46 +123,26 @@ public class CustomerDao{
 	 * @return List of customer objects of the requested company.
 	 * @throws ApplicationException
 	 */
-	public List<Customer> getCustomersByCustomerName(String customerName) throws ApplicationException {
-		ArrayList<Customer> customers = new ArrayList<Customer>();
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
+	@SuppressWarnings("unchecked")
+	@Transactional(propagation=Propagation.REQUIRED)
+	public List<CustomerEntity> getCustomersByCustomerName(String customerName) throws ApplicationException {
 
 		try {
-			// Getting a connection to the DB
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query
-			String sql = "SELECT * FROM Customer WHERE customerName = ?";
-			preparedStatement = connection.prepareStatement(sql);
-
-			preparedStatement.setString(1, customerName);
-			
-	
-			
-			resultSet = preparedStatement.executeQuery();
-
-			// Looping on the received result to add to a list of Customer objects.
-			while (resultSet.next()) {
-				customers.add(extractCustomerFromResultSet(resultSet));
-			}
-
-			
+			List<CustomerEntity> customers;
+			Query getQuery = entityManager.createQuery("SELECT customer FROM CustomerEntity As customer WHERE customerName = :customerNameObj ");
+			getQuery.setParameter("customerNameObj", customerName);
+			customers = getQuery.getResultList();
+			return customers;
+		} catch (NoResultException e) {
+			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
+					+" No customer with name: " + customerName + ".");
 		}
-
-		catch (SQLException e) {
-			e.printStackTrace();
+		catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + 
 					"Error in CustomerDao, getCustomersByCustomerName(); FAILED");
 			}
-
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		}
 		
-		return customers;
 	}
 
 	/**
@@ -215,46 +151,51 @@ public class CustomerDao{
 	 * @return Company object of the requested customer.
 	 * @throws ApplicationException
 	 */
-	public Customer getCustomerByCustomerEmail(String customerEmail) throws ApplicationException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		Customer customer = null;
+	@Transactional(propagation=Propagation.REQUIRED)
+	public CustomerEntity getCustomerByCustomerEmail(String customerEmail) throws ApplicationException {
+//		Connection connection = null;
+//		PreparedStatement preparedStatement = null;
+//		ResultSet resultSet = null;
+//		Customer customer = null;
 
 		try {
-			// Getting a connection to the DB
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query
-			String sql = "SELECT * FROM customer WHERE customerEmail = ? ";
-			preparedStatement = connection.prepareStatement(sql);
-			
-			preparedStatement.setString(1, customerEmail);
-			
-		
-			
-			resultSet = preparedStatement.executeQuery();
-
-			// Checking if we got a reply with the requested data. If no data was received, returns null.
-			if (!resultSet.next()) {
-				return null;
-			}
-			customer = extractCustomerFromResultSet(resultSet);
-
-			
-		}
-
-		catch (SQLException e) {
+			Query getQuery = entityManager.createQuery("SELECT customer FROM CustomerEntity As customer WHERE customerEmail = :customerEmailObj ");
+			getQuery.setParameter("customerEmailObj", customerEmail);
+			CustomerEntity customer = (CustomerEntity) getQuery.getSingleResult();
+//			// Getting a connection to the DB
+//			connection = JdbcUtils.getConnection();
+//			
+//			// Creating a string which will contain the query
+//			String sql = "SELECT * FROM customer WHERE customerEmail = ? ";
+//			preparedStatement = connection.prepareStatement(sql);
+//			
+//			preparedStatement.setString(1, customerEmail);
+//			
+//		
+//			
+//			resultSet = preparedStatement.executeQuery();
+//
+//			// Checking if we got a reply with the requested data. If no data was received, returns null.
+//			if (!resultSet.next()) {
+//				return null;
+//			}
+//			customer = extractCustomerFromResultSet(resultSet);
+//
+//			
+			return customer;
+		} catch (NoResultException e) {
+			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
+					+" No customer with email: " + customerEmail + ".");
+		} catch (Exception e) {
 			e.printStackTrace();
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + 
 					"Error in CustomerDao, getCustomerByCustomerEmail(); FAILED");
 			}
-
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		}
-		return customer;
+//
+//		finally {
+//			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+//		}
 	}
 
 
@@ -263,44 +204,26 @@ public class CustomerDao{
 	 * @return List collection of all the customers in the customer table.
 	 * @throws ApplicationException 
 	 */
-	public ArrayList<Customer> getAllCustomers() throws ApplicationException{
+	@SuppressWarnings("unchecked")
+	@Transactional(propagation=Propagation.REQUIRED)
+	public List<CustomerEntity> getAllCustomers() throws ApplicationException{
 		
-		ArrayList<Customer> customers = new ArrayList<Customer>();
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
 
 		try {
-			// Getting a connection to the DB
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query
-			String sql = "SELECT * FROM Customer";
-			preparedStatement = connection.prepareStatement(sql);
-			
-		
-			
-			resultSet = preparedStatement.executeQuery();
+			List<CustomerEntity> customers;
+			Query getQuery = entityManager.createQuery("SELECT customer FROM CustomerEntity As customer");
+			customers = getQuery.getResultList();
+			return customers;
+		}catch (NoResultException e) {
+			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
+					+"  No companies in data base.");
+		} 
 
-			// Looping on the received result to add to a list of Customer objects.
-			while (resultSet.next()) {
-				customers.add(extractCustomerFromResultSet(resultSet));
-			}
-
-			
-		}
-
-		catch (SQLException e) {
-			e.printStackTrace();
+		catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CustomerDao, getAllCustomers(); FAILED");
 			}
-
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		}
 		
-		return customers;
 		
 	}
 	

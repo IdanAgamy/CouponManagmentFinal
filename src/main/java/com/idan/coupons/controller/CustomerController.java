@@ -3,10 +3,6 @@ package com.idan.coupons.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import com.idan.coupons.beans.Customer;
@@ -15,7 +11,6 @@ import com.idan.coupons.dao.CustomerDao;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.InputErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
-import com.idan.coupons.utils.CookieUtil;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
 
@@ -93,13 +88,13 @@ public class CustomerController {
 	 * @return List of customers object of the requested customer name.
 	 * @throws ApplicationException
 	 */
-	public List<Customer> getCustomersByCustomerName(String customerName) throws ApplicationException {
+	public List<CustomerEntity> getCustomersByCustomerName(String customerName) throws ApplicationException {
 		if (!ValidationUtils.isValidNameFormat(customerName)) {
 			throw new ApplicationException(ErrorType.INVALID_PARAMETER, DateUtils.getCurrentDateAndTime()
 					+" Not valid name format " + customerName + ".");
 		}
 		
-		List<Customer> customers = customerDao.getCustomersByCustomerName(customerName);
+		List<CustomerEntity> customers = customerDao.getCustomersByCustomerName(customerName);
 		
 		if (customers.isEmpty()) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
@@ -115,13 +110,13 @@ public class CustomerController {
 	 * @return Customer object of the requested customer.
 	 * @throws ApplicationException
 	 */
-	public Customer getCustomerByCustomerEmail(String customerEmail) throws ApplicationException {
+	public CustomerEntity getCustomerByCustomerEmail(String customerEmail) throws ApplicationException {
 		if (!ValidationUtils.isValidEmailFormat(customerEmail)) {
 			throw new ApplicationException(ErrorType.INVALID_PARAMETER, DateUtils.getCurrentDateAndTime()
 					+" Not valid email format " + customerEmail + ".");
 		}
 		
-		Customer customer = customerDao.getCustomerByCustomerEmail(customerEmail);
+		CustomerEntity customer = customerDao.getCustomerByCustomerEmail(customerEmail);
 		
 		if (customer == null) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
@@ -136,14 +131,10 @@ public class CustomerController {
 	 * @return List collection of all the customers in the customer table.
 	 * @throws ApplicationException
 	 */
-	public List<Customer> getAllCustomers() throws ApplicationException{
+	public List<CustomerEntity> getAllCustomers() throws ApplicationException{
 		
-		List<Customer> customers = this.customerDao.getAllCustomers();
+		List<CustomerEntity> customers = this.customerDao.getAllCustomers();
 		
-		if(customers.isEmpty()) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No customers in data base.");
-		}
 		
 		return customers;
 		

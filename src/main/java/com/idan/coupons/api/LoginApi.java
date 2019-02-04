@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-//import com.idan.coupons.beans.Company;
 import com.idan.coupons.beans.CompanyEntity;
-import com.idan.coupons.beans.Customer;
 import com.idan.coupons.beans.CustomerEntity;
 import com.idan.coupons.beans.UserLoginInfo;
 import com.idan.coupons.controller.CompanyController;

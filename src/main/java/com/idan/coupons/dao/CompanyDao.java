@@ -103,18 +103,18 @@ public class CompanyDao{
 	@Transactional(propagation=Propagation.REQUIRED)
 	public CompanyEntity getCompanyByComapnyName(String companyName) throws ApplicationException {
 		
-		CompanyEntity company;
 		try {
+			CompanyEntity company;
 			Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyName = :CompanyNameObj ");
 			getQuery.setParameter("CompanyNameObj", companyName);
 			company = (CompanyEntity) getQuery.getSingleResult();
+			return company;
 		} catch (NoResultException e) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
 					+" No company with name: " + companyName + ".");
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getCompanyByComapnyName(); FAILED");
 		}
-		return company;
 	}
 
 	/**
@@ -125,18 +125,18 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public CompanyEntity getCompanyByComapnyEmail(String companyEmail) throws ApplicationException {
-		CompanyEntity company;
+		 
 		try {
 			Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyEmail = :companyEmailObj ");
 			getQuery.setParameter("companyEmailObj", companyEmail);
-			company = (CompanyEntity) getQuery.getSingleResult();
+			CompanyEntity company = (CompanyEntity) getQuery.getSingleResult();
+			return company;
 		} catch (NoResultException e) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
 					+" No company with email: " + companyEmail + ".");
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in getCompanyByComapnyEmail, getCompanyByComapnyName(); FAILED");
 		}
-		return company;
 	}
 
 	/**

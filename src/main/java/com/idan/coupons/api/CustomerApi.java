@@ -43,7 +43,7 @@ public class CustomerApi {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	//http://localhost:8080/CouponManagmentSystemVer3/customers
-	public List<Customer> getAllCustomers() throws ApplicationException {
+	public List<CustomerEntity> getAllCustomers() throws ApplicationException {
 		return customerController.getAllCustomers();
 	}
 
@@ -69,7 +69,7 @@ public class CustomerApi {
 	 */
 	@RequestMapping(value ="/byCustomerName", method = RequestMethod.GET)
 	//http://localhost:8080/CouponManagmentSystemVer3/customers/byCustomerName?customerName=patrick
-	public List<Customer> getCustomerByName(@RequestParam("customerName") String customerName) throws ApplicationException{
+	public List<CustomerEntity> getCustomerByName(@RequestParam("customerName") String customerName) throws ApplicationException{
 
 		return customerController.getCustomersByCustomerName(customerName);
 	}
@@ -82,7 +82,7 @@ public class CustomerApi {
 	 */
 	@RequestMapping(value ="/{customerEmail}/byCustomerEmail", method = RequestMethod.GET)
 	//http://localhost:8080/CouponManagmentSystemVer3/customers/Picard@EnterpriseD/byCustomerEmail
-	public Customer getCustomerByEmail(@PathVariable("customerEmail") String customerEmail) throws ApplicationException{
+	public CustomerEntity getCustomerByEmail(@PathVariable("customerEmail") String customerEmail) throws ApplicationException{
 		return customerController.getCustomerByCustomerEmail(customerEmail);
 	}
 

@@ -7,9 +7,7 @@ import javax.servlet.http.Cookie;
 //import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.idan.coupons.beans.Company;
 import com.idan.coupons.beans.CompanyEntity;
-import com.idan.coupons.beans.Customer;
 import com.idan.coupons.beans.CustomerEntity;
 //import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.UserType;

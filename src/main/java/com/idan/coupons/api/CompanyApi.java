@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.idan.coupons.beans.Company;
 import com.idan.coupons.beans.CompanyEntity;
 import com.idan.coupons.controller.CompanyController;
 import com.idan.coupons.exceptions.ApplicationException;
-import com.idan.coupons.utils.CookieUtil;
 import com.idan.coupons.utils.ValidationUtils;
 
 @CrossOrigin(origins="http://localhost:4200")
