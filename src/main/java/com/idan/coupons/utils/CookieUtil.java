@@ -8,6 +8,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import com.idan.coupons.beans.Company;
+import com.idan.coupons.beans.CompanyEntity;
 import com.idan.coupons.beans.Customer;
 //import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.UserType;
@@ -20,7 +21,7 @@ public class CookieUtil {
 	 * @param company - company objects of the logging in user
 	 * @return - List of cookies with the company parameters.
 	 */
-	public static List<Cookie> loginCookies(Company company) {
+	public static List<Cookie> loginCookies(CompanyEntity company) {
 
 		List<Cookie> loginCookies = new ArrayList<Cookie>();
 

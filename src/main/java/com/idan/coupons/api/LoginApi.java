@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.idan.coupons.beans.Company;
+//import com.idan.coupons.beans.Company;
+import com.idan.coupons.beans.CompanyEntity;
 import com.idan.coupons.beans.Customer;
 import com.idan.coupons.beans.UserLoginInfo;
 import com.idan.coupons.controller.CompanyController;
@@ -78,7 +79,7 @@ public class LoginApi {
 			// Validating a company login.
 			if(userLoginInfo.getUserType() == UserType.COMPANY) {
 				
-				Company company = companyConroller.login(userLoginInfo.getName(), userLoginInfo.getPassword());
+				CompanyEntity company = companyConroller.login(userLoginInfo.getName(), userLoginInfo.getPassword());
 				if(company != null) {
 					request.getSession();					
 					List<Cookie> loginCookies = CookieUtil.loginCookies(company);

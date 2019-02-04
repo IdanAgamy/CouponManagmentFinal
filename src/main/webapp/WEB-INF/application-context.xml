@@ -11,7 +11,20 @@
     http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="couponSystem"></property>
+		<!-- <property name="persistenceXmlLocation" value="classpath:META-INF/persistence.xml"/> -->
+	</bean>
 
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
 	<!--Support for annotations such as @RequestMapping @RequestBody etc -->
 	<mvc:annotation-driven />
 

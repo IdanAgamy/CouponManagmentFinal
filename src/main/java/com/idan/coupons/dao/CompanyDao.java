@@ -8,20 +8,29 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.idan.coupons.beans.Company;
+import com.idan.coupons.beans.CompanyEntity;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.JdbcUtils;
+//import com.mysql.cj.Query;
 
 //TODO implement Transactional
 
 @Repository
 public class CompanyDao{
 
-	
+	@PersistenceContext(unitName="couponSystem")
+	private EntityManager entityManager;
 	
 	
 	/**
@@ -29,54 +38,10 @@ public class CompanyDao{
 	 * @param company - the company as a Company object to add to the DB.
 	 * @return Long of the ID of the created company.
 	 * @throws ApplicationException
-	 */
-	
-	public Long createCompany(Company company) throws ApplicationException {
-
-		// Preparing the JDBC resources for sending the query.
-		PreparedStatement preparedStatement = null;
-		Connection connection = null;
-
-		try {
-			
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();	
-			
-			// Creating a string which will contain the query.
-			String sql = "insert into company (CompanyName, CompanyPassword, CompanyEMail) values (?,?,?)";
-			preparedStatement= connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-			
-			// Switching the question marks with the input from the user.
-			preparedStatement.setString(1, company.getCompanyName());
-			preparedStatement.setString(2, company.getCompanyPassword());
-			preparedStatement.setString(3, company.getCompanyEmail());
-			
-			
-
-			// Executing the query.
-			preparedStatement.executeUpdate();
-			ResultSet resultSet = preparedStatement.getGeneratedKeys();
-			if(resultSet.next()) {
-				return resultSet.getLong(1);
-			}
-			
-			return null;
-		} 
-
-		catch (SQLException e) {
-			
-			// In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, creatCompany(); FAILED");
-		
-		} 
-
-		finally {
-			
-			// Closing the resources.
-			JdbcUtils.closeResources(connection, preparedStatement);
-		
-		}
-
+	 */	
+	@Transactional(propagation=Propagation.REQUIRED)
+	public void createCompany(CompanyEntity company) throws ApplicationException {
+		entityManager.persist(company);
 	}
 
 	/**
@@ -84,41 +49,10 @@ public class CompanyDao{
 	 * @param company - the company as a Company object to remove from the DB.
 	 * @throws ApplicationException 
 	 */
+	@Transactional(propagation=Propagation.REQUIRED)
 	public void removeCompanyByCompanyID(Long companyID) throws ApplicationException {
-		
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		
-		try {
-			
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query.
-			String sql = "DELETE FROM company WHERE CompanyID = ?";
-			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setLong(1, companyID);
-			
-		
-
-			preparedStatement.executeUpdate();
-						
-		}
-		
-		catch (SQLException e) {
-			
-			e.printStackTrace();
-			
-			// In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, removeCompany(); FAILED");
-		
-		}
-		
-		finally {
-			
-			JdbcUtils.closeResources(connection, preparedStatement);
-		
-		}
+		CompanyEntity company = getCompanyByComapnyId(companyID);
+		entityManager.remove(company);
 		
 	}
 			
@@ -128,45 +62,9 @@ public class CompanyDao{
 	 * @param company - the company as a Company object to be updated in the DB.
 	 * @throws ApplicationException. 
 	 */
-	public void updateCompany(Company company) throws ApplicationException {
-
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		
-		try {
-
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query.
-			String sql = "UPDATE company SET CompanyName = ?, CompanyPassword = ?, CompanyEMail = ? WHERE CompanyID = ?";
-			preparedStatement = connection.prepareStatement(sql);
-			
-			preparedStatement.setString	(1, company.getCompanyName());
-			preparedStatement.setString	(2, company.getCompanyPassword());
-			preparedStatement.setString	(3, company.getCompanyEmail());
-			preparedStatement.setLong	(4, company.getCompanyId());
-			
-		
-			
-			preparedStatement.executeUpdate();
-			
-		}
-		
-		catch (SQLException e) {
-			
-			e.printStackTrace();
-			
-			// In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, updateCompany(); FAILED");
-			
-		}
-		
-		finally {
-
-			JdbcUtils.closeResources(connection, preparedStatement);
-			
-		}
+	@Transactional(propagation=Propagation.REQUIRED)
+	public void updateCompany(CompanyEntity company) throws ApplicationException {
+		entityManager.merge(company);
 		
 	}
 
@@ -177,53 +75,10 @@ public class CompanyDao{
 	 * @return Company object of the requested company.
 	 * @throws ApplicationException. 
 	 */
-	public Company getCompanyByComapnyId(Long companyId) throws ApplicationException {
-
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		Company company = null;
-
-		try {
-
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM company WHERE CompanyID = ? ";
-			preparedStatement = connection.prepareStatement(sql);
-
-			preparedStatement.setLong(1, companyId);
-			
+	@Transactional(propagation=Propagation.REQUIRED)
+	public CompanyEntity getCompanyByComapnyId(Long companyId) throws ApplicationException {
 		
-
-			resultSet = preparedStatement.executeQuery();
-			
-			// Checking if we got a reply with the requested data. If no data was received, returns null.
-			if (!resultSet.next()) {
-				return null;
-			}
-			
-			company = extractCompanyFromResultSet(resultSet);
-
-		}
-
-		catch (SQLException e) {
-			
-			e.printStackTrace();
-
-			// In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getCompanyByComapnyId(); FAILED");
-		
-		}
-
-		finally {
-
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		
-		}
-		
-		return company;
+		return entityManager.find(CompanyEntity.class, companyId);
 		
 	}
 	
@@ -233,51 +88,12 @@ public class CompanyDao{
 	 * @return Company object of the requested company.
 	 * @throws ApplicationException
 	 */
-	public Company getCompanyByComapnyName(String companyName) throws ApplicationException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		Company company = null;
-
-		try {
-
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM company WHERE companyName = ? ";
-			preparedStatement = connection.prepareStatement(sql);
-
-			preparedStatement.setString(1, companyName);
-			
+	@Transactional(propagation=Propagation.REQUIRED)
+	public CompanyEntity getCompanyByComapnyName(String companyName) throws ApplicationException {
 		
-
-			resultSet = preparedStatement.executeQuery();
-			
-			// Checking if we got a reply with the requested data. If no data was received, returns null.
-			if (!resultSet.next()) {
-				return null;
-			}
-			
-			company = extractCompanyFromResultSet(resultSet);
-
-		}
-
-		catch (SQLException e) {
-			
-			e.printStackTrace();
-
-			// In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getCompanyByComapnyName(); FAILED");
-		
-		}
-
-		finally {
-
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		
-		}
-		
+		Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyName = :CompanyNameObj ");
+		getQuery.setParameter("CompanyNameObj", companyName);
+		CompanyEntity company = (CompanyEntity) getQuery.getSingleResult();
 		return company;
 	}
 
@@ -287,51 +103,11 @@ public class CompanyDao{
 	 * @return Company object of the requested company.
 	 * @throws ApplicationException
 	 */
-	public Company getCompanyByComapnyEmail(String companyEmail) throws ApplicationException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		Company company = null;
-
-		try {
-
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM company WHERE companyEmail = ? ";
-			preparedStatement = connection.prepareStatement(sql);
-
-			preparedStatement.setString(1, companyEmail);
-			
-		
-
-			resultSet = preparedStatement.executeQuery();
-			
-			// Checking if we got a reply with the requested data. If no data was received, returns null.
-			if (!resultSet.next()) {
-				return null;
-			}
-			
-			company = extractCompanyFromResultSet(resultSet);
-
-		}
-
-		catch (SQLException e) {
-			
-			e.printStackTrace();
-
-			// In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in getCompanyByComapnyEmail, getCompanyByComapnyName(); FAILED");
-		
-		}
-
-		finally {
-
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		
-		}
-		
+	@Transactional(propagation=Propagation.REQUIRED)
+	public CompanyEntity getCompanyByComapnyEmail(String companyEmail) throws ApplicationException {
+		Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyEmail = :companyEmailObj ");
+		getQuery.setParameter("companyEmailObj", companyEmail);
+		CompanyEntity company = (CompanyEntity) getQuery.getSingleResult();
 		return company;
 	}
 
@@ -340,51 +116,11 @@ public class CompanyDao{
 	 * @return List collection of all the companies in the company table.
 	 * @throws ApplicationException.
 	 */
-	public List<Company> getAllCompanies() throws ApplicationException{
-
-		List<Company> companies = new ArrayList<>();
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-
-		try {
-
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM company";
-			preparedStatement = connection.prepareStatement(sql);
-			
-			
-
-			resultSet = preparedStatement.executeQuery();
-			
-			// Looping on the received result to add to a list of Company objects.
-			while (resultSet.next()) {
-				companies.add(extractCompanyFromResultSet(resultSet));
-			}
-
-			
-		}
-
-		catch (SQLException e) {
-			
-			e.printStackTrace();
-
-			// In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getAllCompanies(); FAILED");
-		
-		}
-
-		finally {
-
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		
-		}
-		
+	@Transactional(propagation=Propagation.REQUIRED)
+	public List<CompanyEntity> getAllCompanies() throws ApplicationException{
+		Query getQuery = entityManager.createQuery("SELECT company FROM companyEntity As company");
+		List<CompanyEntity> companies = getQuery.getResultList();
 		return companies;
-		
 	}
 	
 	/**
@@ -394,49 +130,13 @@ public class CompanyDao{
 	 * @return The company object that fits the parameters.
 	 * @throws ApplicationException. 
 	 */
-	public Company login (String companyName, String companyPasword) throws ApplicationException {
-		
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-
-		try {
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM company WHERE CompanyName = ? AND BINARY CompanyPassword = ?; ";
-			preparedStatement = connection.prepareStatement(sql);
-		
-			preparedStatement.setString(1, companyName);
-			preparedStatement.setString(2, companyPasword);
-			
-		
-
-			resultSet = preparedStatement.executeQuery();
-			
-			// If no result was received, return false because there is no matching company name and company password
-			if (!resultSet.next()) {
-				return null;
-			}
-			
-			Company company = extractCompanyFromResultSet(resultSet);
-			
-			return company;
-			
-		}
-
-		catch (SQLException e) {
-			e.printStackTrace();
-			// In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, login(); FAILED");
-		}
-
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		}
-		
-		
+	@Transactional(propagation=Propagation.REQUIRED)
+	public CompanyEntity login (String companyName, String companyPasword) throws ApplicationException {
+		Query loginQuery = entityManager.createQuery("SELECT company FROM CompanyEntity as company WHERE companyName =:companyNameObj AND companyPassword =:companyPasswordObj");
+		loginQuery.setParameter("companyNameObj", companyName);
+		loginQuery.setParameter("companyPasswordObj", companyPasword);
+		CompanyEntity company = (CompanyEntity) loginQuery.getSingleResult();
+		return company;		
 	}
 	
 	/**
@@ -446,6 +146,7 @@ public class CompanyDao{
 	 * 		   false - Email not in use by other company.
 	 * @throws ApplicationException
 	 */
+	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCompanyExistByEmail(String companyEmail) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -490,6 +191,7 @@ public class CompanyDao{
 	 * 		   false - Email not in use by other company.
 	 * @throws ApplicationException
 	 */
+	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCompanyEmailExistForUpdate(Long companyID, String companyEmail) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -534,6 +236,7 @@ public class CompanyDao{
 	 * 		   false - Name not in use by other company.
 	 * @throws ApplicationException
 	 */
+	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCompanyExistByName(String companyName) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -578,6 +281,7 @@ public class CompanyDao{
 	 * 		   false - Name not in use by other company.
 	 * @throws ApplicationException
 	 */
+	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCompanyNameExistForUpdate(long companyID, String companyName) throws ApplicationException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;

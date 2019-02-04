@@ -3,14 +3,11 @@ package com.idan.coupons.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.idan.coupons.beans.Company;
+import com.idan.coupons.beans.CompanyEntity;
 //import com.idan.coupons.beans.Customer;
 import com.idan.coupons.dao.CompanyDao;
 //import com.idan.coupons.dao.CouponDao;
@@ -18,7 +15,6 @@ import com.idan.coupons.dao.CompanyDao;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.InputErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
-import com.idan.coupons.utils.CookieUtil;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
 
@@ -37,14 +33,13 @@ public class CompanyController {
 	 * @param company - the company as a Company object to add to the DB.
 	 * @throws ApplicationException
 	 */
-	public Company createCompany(Company company) throws ApplicationException {
+	public CompanyEntity createCompany(CompanyEntity company) throws ApplicationException {
 
 		// Validating company parameters for creating company.
-		validateCreateCompany(company);
+//		validateCreateCompany(company);
 		
 		// If we didn't catch any exception, we call the 'createCoupon' method.
-		Long companyID = this.companyDao.createCompany(company);
-		company.setCompanyId(companyID);
+		this.companyDao.createCompany(company);
 		
 		return company;
 	}
@@ -69,10 +64,10 @@ public class CompanyController {
 	 * @param company - the company as a Company object to be updated in the DB.
 	 * @throws ApplicationException
 	 */
-	public void updateCompany(Company company) throws ApplicationException {
+	public void updateCompany(CompanyEntity company) throws ApplicationException {
 		
 		//Validating company parameters for updating company.
-		validateUpdateCompany(company);
+//		validateUpdateCompany(company);
 		
 		this.companyDao.updateCompany(company);
 		
@@ -84,12 +79,12 @@ public class CompanyController {
 	 * @return Company object of the requested company.
 	 * @throws ApplicationException
 	 */
-	public Company getCompanyByComapnyId(Long companyId) throws ApplicationException {
+	public CompanyEntity getCompanyByComapnyId(Long companyId) throws ApplicationException {
 		if(companyId==null) {
 			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
 					+"  Bad input inserted, null value.");
 		}
-		Company company = this.companyDao.getCompanyByComapnyId(companyId);
+		CompanyEntity company = this.companyDao.getCompanyByComapnyId(companyId);
 		
 		if(company == null) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
@@ -106,14 +101,14 @@ public class CompanyController {
 	 * @return Company object of the requested company.
 	 * @throws ApplicationException
 	 */
-	public Company getCompanyByComapnyName(String companyName)  throws ApplicationException{
+	public CompanyEntity getCompanyByComapnyName(String companyName)  throws ApplicationException{
 
 		if (!ValidationUtils.isValidNameFormat(companyName)) {
 			throw new ApplicationException(ErrorType.INVALID_PARAMETER, DateUtils.getCurrentDateAndTime()
 					+" Not valid name format " + companyName + ".");
 		}
 		
-		Company company = companyDao.getCompanyByComapnyName(companyName);
+		CompanyEntity company = companyDao.getCompanyByComapnyName(companyName);
 		
 		if (company == null) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
@@ -130,13 +125,13 @@ public class CompanyController {
 	 * @return Company object of the requested company.
 	 * @throws ApplicationException
 	 */
-	public Company getCompanyByComapnyEmail(String companyEmail) throws ApplicationException {
+	public CompanyEntity getCompanyByComapnyEmail(String companyEmail) throws ApplicationException {
 		if (!ValidationUtils.isValidEmailFormat(companyEmail)) {
 			throw new ApplicationException(ErrorType.INVALID_PARAMETER, DateUtils.getCurrentDateAndTime()
 					+" Not valid name format " + companyEmail + ".");
 		}
 		
-		Company company = companyDao.getCompanyByComapnyEmail(companyEmail);
+		CompanyEntity company = companyDao.getCompanyByComapnyEmail(companyEmail);
 		
 		if (company == null) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
@@ -151,9 +146,9 @@ public class CompanyController {
 	 * @return List collection of all the companies in the company table
 	 * @throws ApplicationException
 	 */
-	public List<Company> getAllCompanies() throws ApplicationException{
+	public List<CompanyEntity> getAllCompanies() throws ApplicationException{
 		
-		List<Company> companies = this.companyDao.getAllCompanies();
+		List<CompanyEntity> companies = this.companyDao.getAllCompanies();
 		
 		if(companies.isEmpty()) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
@@ -172,7 +167,7 @@ public class CompanyController {
 	 * @return The company object that fits the parameters.
 	 * @throws ApplicationException
 	 */
-	public Company login (String companyName, String companyPasword) throws ApplicationException {
+	public CompanyEntity login (String companyName, String companyPasword) throws ApplicationException {
 		
 		validateCompany(new Company(companyName, companyPasword, "valid@email"));
 		
