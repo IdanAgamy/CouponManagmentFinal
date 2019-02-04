@@ -41,7 +41,12 @@ public class CompanyDao{
 	 */	
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void createCompany(CompanyEntity company) throws ApplicationException {
-		entityManager.persist(company);
+		try {
+			entityManager.persist(company);
+		} catch (Exception e) {
+			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, creatCompany(); FAILED");
+
+		}
 	}
 
 	/**
@@ -52,7 +57,11 @@ public class CompanyDao{
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void removeCompanyByCompanyID(Long companyID) throws ApplicationException {
 		CompanyEntity company = getCompanyByComapnyId(companyID);
-		entityManager.remove(company);
+		try {
+			entityManager.remove(company);
+		} catch (Exception e) {
+			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, removeCompany(); FAILED");
+		}
 		
 	}
 			
@@ -64,7 +73,11 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void updateCompany(CompanyEntity company) throws ApplicationException {
-		entityManager.merge(company);
+		try {
+			entityManager.merge(company);
+		} catch (Exception e) {
+			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, updateCompany(); FAILED");
+		}
 		
 	}
 
@@ -78,7 +91,11 @@ public class CompanyDao{
 	@Transactional(propagation=Propagation.REQUIRED)
 	public CompanyEntity getCompanyByComapnyId(Long companyId) throws ApplicationException {
 		
-		return entityManager.find(CompanyEntity.class, companyId);
+		try {
+			return entityManager.find(CompanyEntity.class, companyId);
+		} catch (Exception e) {
+			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getCompanyByComapnyId(); FAILED");
+		}
 		
 	}
 	
@@ -91,9 +108,14 @@ public class CompanyDao{
 	@Transactional(propagation=Propagation.REQUIRED)
 	public CompanyEntity getCompanyByComapnyName(String companyName) throws ApplicationException {
 		
-		Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyName = :CompanyNameObj ");
-		getQuery.setParameter("CompanyNameObj", companyName);
-		CompanyEntity company = (CompanyEntity) getQuery.getSingleResult();
+		CompanyEntity company;
+		try {
+			Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyName = :CompanyNameObj ");
+			getQuery.setParameter("CompanyNameObj", companyName);
+			company = (CompanyEntity) getQuery.getSingleResult();
+		} catch (Exception e) {
+			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getCompanyByComapnyName(); FAILED");
+		}
 		return company;
 	}
 
@@ -105,9 +127,14 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public CompanyEntity getCompanyByComapnyEmail(String companyEmail) throws ApplicationException {
-		Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyEmail = :companyEmailObj ");
-		getQuery.setParameter("companyEmailObj", companyEmail);
-		CompanyEntity company = (CompanyEntity) getQuery.getSingleResult();
+		CompanyEntity company;
+		try {
+			Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyEmail = :companyEmailObj ");
+			getQuery.setParameter("companyEmailObj", companyEmail);
+			company = (CompanyEntity) getQuery.getSingleResult();
+		} catch (Exception e) {
+			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in getCompanyByComapnyEmail, getCompanyByComapnyName(); FAILED");
+		}
 		return company;
 	}
 
@@ -118,8 +145,13 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public List<CompanyEntity> getAllCompanies() throws ApplicationException{
-		Query getQuery = entityManager.createQuery("SELECT company FROM companyEntity As company");
-		List<CompanyEntity> companies = getQuery.getResultList();
+		List<CompanyEntity> companies;
+		try {
+			Query getQuery = entityManager.createQuery("SELECT company FROM companyEntity As company");
+			companies = getQuery.getResultList();
+		} catch (Exception e) {
+			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getAllCompanies(); FAILED");
+		}
 		return companies;
 	}
 	
@@ -132,10 +164,15 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public CompanyEntity login (String companyName, String companyPasword) throws ApplicationException {
-		Query loginQuery = entityManager.createQuery("SELECT company FROM CompanyEntity as company WHERE companyName =:companyNameObj AND companyPassword =:companyPasswordObj");
-		loginQuery.setParameter("companyNameObj", companyName);
-		loginQuery.setParameter("companyPasswordObj", companyPasword);
-		CompanyEntity company = (CompanyEntity) loginQuery.getSingleResult();
+		CompanyEntity company;
+		try {
+			Query loginQuery = entityManager.createQuery("SELECT company FROM CompanyEntity as company WHERE companyName =:companyNameObj AND companyPassword =:companyPasswordObj");
+			loginQuery.setParameter("companyNameObj", companyName);
+			loginQuery.setParameter("companyPasswordObj", companyPasword);
+			company = (CompanyEntity) loginQuery.getSingleResult();
+		} catch (Exception e) {
+			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, login(); FAILED");
+		}
 		return company;		
 	}
 	
@@ -148,39 +185,44 @@ public class CompanyDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCompanyExistByEmail(String companyEmail) throws ApplicationException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
+//		Connection connection = null;
+//		PreparedStatement preparedStatement = null;
+//		ResultSet resultSet = null;
 		
 		try {
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM company WHERE companyEmail = ? ";
-			preparedStatement = connection.prepareStatement(sql);
-			
-			preparedStatement.setString(1, companyEmail);
-			
-			resultSet = preparedStatement.executeQuery();
-			
-			// Checking if we got a reply with the requested data. If no data was received, returns true.
-			if (!resultSet.next()) {
+			Query verifyQUey = entityManager.createQuery("SELECT company FROM CompanyEntity WHERE companyEmail = :companyEmailObj ");
+			verifyQUey.setParameter("companyEmailObj", companyEmail);
+			CompanyEntity company = (CompanyEntity) verifyQUey.getSingleResult();
+			if (company == null) {
 				return false;
 			}
-			
+//			// Getting a connection to the DB.
+//			connection = JdbcUtils.getConnection();
+//			
+//			// Creating a string which will contain the query.
+//			String sql = "SELECT * FROM company WHERE companyEmail = ? ";
+//			preparedStatement = connection.prepareStatement(sql);
+//			
+//			preparedStatement.setString(1, companyEmail);
+//			
+//			resultSet = preparedStatement.executeQuery();
+//			
+//			// Checking if we got a reply with the requested data. If no data was received, returns true.
+//			if (!resultSet.next()) {
+//				return false;
+//			}
+//			
 			return true;
 		}
 		
-		catch (SQLException e) {
-			e.printStackTrace();
+		catch (Exception e) {
 //		In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, isCompanyExistByEmail(); FAILED");
 		}
-		
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		}
+//		
+//		finally {
+//			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+//		}
 	}
 	
 	/**
@@ -319,23 +361,6 @@ public class CompanyDao{
 		}
 	}
 	
-	/**
-	 * Extract company's data by parameters from the database.
-	 * @param resultSet - Data received from DB.
-	 * @return Company object made from the resultSet.
-	 * @throws SQLException.
-	 */
-	private Company extractCompanyFromResultSet(ResultSet resultSet) throws SQLException {
-		
-		Company company = new Company();
-		
-		company.setCompanyId		(resultSet.getLong	("CompanyID"));
-		company.setCompanyName		(resultSet.getString("CompanyName"));
-		company.setCompanyPassword	(resultSet.getString("CompanyPassword"));
-		company.setCompanyEmail		(resultSet.getString("CompanyEMail"));
-
-		return company;
-	}
 
 	
 }
