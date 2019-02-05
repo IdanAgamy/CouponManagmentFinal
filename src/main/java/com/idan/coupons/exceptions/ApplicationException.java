@@ -7,7 +7,7 @@ import java.util.List;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.InputErrorType;
 
-public class ApplicationException extends Exception {
+public class ApplicationException extends RuntimeException {
 
 	private static final long serialVersionUID = -6259848867338873175L;
 	private ErrorType type;

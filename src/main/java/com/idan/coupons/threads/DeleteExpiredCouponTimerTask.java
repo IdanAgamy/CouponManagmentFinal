@@ -7,16 +7,19 @@ import java.util.TimerTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.idan.coupons.controller.CouponController;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.exceptions.ExceptionsHandler;
 import com.idan.coupons.utils.DateUtils;
 
+@Component
 public class DeleteExpiredCouponTimerTask extends TimerTask{
 
-//	private final static long onceADay= 1000 * 60 * 60 * 24; // Time period between activation set to once a day.	
-	private CouponController couponController = new CouponController();
+	@Autowired
+	private CouponController couponController;
 	private static final Logger logger = LogManager.getLogger(ExceptionsHandler.class);
 
 

@@ -17,14 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.idan.coupons.beans.Customer;
 import com.idan.coupons.beans.CustomerEntity;
 import com.idan.coupons.controller.CustomerController;
-//import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.CookieUtil;
-//import com.idan.coupons.utils.CookieUtil;
-//import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
 
 @CrossOrigin(origins="http://localhost:4200")

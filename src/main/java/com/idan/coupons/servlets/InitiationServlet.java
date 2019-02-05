@@ -6,11 +6,15 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Timer;
 
+import javax.annotation.PostConstruct;
 //import javax.servlet.ServletException;
 //import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 //import javax.servlet.http.HttpServletRequest;
 //import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.idan.coupons.threads.DeleteExpiredCouponTimerTask;
 //import com.idan.coupons.threads.Harta;
@@ -22,13 +26,15 @@ import com.idan.coupons.threads.DeleteExpiredCouponTimerTask;
  * This servlet is responsible for every method that needed to be start on load of server
  */
 //@WebServlet("/InitiationServlet")
+@Component
 public class InitiationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public InitiationServlet() {
+	@Autowired
+	DeleteExpiredCouponTimerTask deleteExpiredCouponTimerTask;
+	
+	@PostConstruct
+    public void Init() {
     	
     	startDeleteExpiredCoupons();
     	
@@ -45,10 +51,10 @@ public class InitiationServlet extends HttpServlet {
 		gc.set(Calendar.MINUTE, 00);
 		gc.set(Calendar.SECOND, 00);
 		gc.add(Calendar.DAY_OF_MONTH, 1);
-		
+		System.out.println("started DeleteExpiredCouponTimerTask thread, expierd coupon will be deleted first at: " + gc.getTime() + " and every 24 hourse after that.");
 		// Setting the start and time of running of the thread.
 		Timer timer = new Timer();
-		timer.schedule(new DeleteExpiredCouponTimerTask(), gc.getTime(), 1000 * 60 * 60 * 24);
+		timer.schedule(deleteExpiredCouponTimerTask, gc.getTime(), 1000 * 60 * 60 * 24);
 	}
     
     

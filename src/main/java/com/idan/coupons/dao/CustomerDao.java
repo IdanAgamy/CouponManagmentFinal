@@ -25,7 +25,6 @@ import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.JdbcUtils;
-//TODO implement Transactional
 
 @Repository
 public class CustomerDao{
@@ -153,35 +152,11 @@ public class CustomerDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public CustomerEntity getCustomerByCustomerEmail(String customerEmail) throws ApplicationException {
-//		Connection connection = null;
-//		PreparedStatement preparedStatement = null;
-//		ResultSet resultSet = null;
-//		Customer customer = null;
 
 		try {
 			Query getQuery = entityManager.createQuery("SELECT customer FROM CustomerEntity As customer WHERE customerEmail = :customerEmailObj ");
 			getQuery.setParameter("customerEmailObj", customerEmail);
 			CustomerEntity customer = (CustomerEntity) getQuery.getSingleResult();
-//			// Getting a connection to the DB
-//			connection = JdbcUtils.getConnection();
-//			
-//			// Creating a string which will contain the query
-//			String sql = "SELECT * FROM customer WHERE customerEmail = ? ";
-//			preparedStatement = connection.prepareStatement(sql);
-//			
-//			preparedStatement.setString(1, customerEmail);
-//			
-//		
-//			
-//			resultSet = preparedStatement.executeQuery();
-//
-//			// Checking if we got a reply with the requested data. If no data was received, returns null.
-//			if (!resultSet.next()) {
-//				return null;
-//			}
-//			customer = extractCustomerFromResultSet(resultSet);
-//
-//			
 			return customer;
 		} catch (NoResultException e) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
@@ -192,10 +167,7 @@ public class CustomerDao{
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + 
 					"Error in CustomerDao, getCustomerByCustomerEmail(); FAILED");
 			}
-//
-//		finally {
-//			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-//		}
+
 	}
 
 
@@ -234,6 +206,7 @@ public class CustomerDao{
 	 * @return The customer object that fits the parameters.
 	 * @throws ApplicationException 
 	 */
+	@Transactional(propagation=Propagation.REQUIRED)
 	public CustomerEntity login (String customerEmail, String customerPassword) throws ApplicationException {
 	
 		try {
@@ -306,23 +279,5 @@ public class CustomerDao{
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, isCustomerExistByEmail(); FAILED");
 		}
 	}
-
-
-	/**
-	 * Extract customer's data by parameters from the database
-	 * @param resultSet - Data received from DB
-	 * @return Company object made from the resultSet
-	 * @throws SQLException
-	 */
-	private Customer extractCustomerFromResultSet(ResultSet resultSet) throws SQLException {
-		Customer customer = new Customer();
-		customer.setCustomerId(resultSet.getLong("CustomerID"));
-		customer.setCustomerName(resultSet.getString("CustomerName"));
-		customer.setCustomerPassword(resultSet.getString("CustomerPassword"));
-		customer.setCustomerEmail(resultSet.getString("customerEmail"));
-	
-		return customer;
-	}
-
 	
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.idan.coupons.beans.Coupon;
+import com.idan.coupons.beans.CouponEntity;
 //import com.idan.coupons.dao.CompanyDao;
 import com.idan.coupons.dao.CouponDao;
 //import com.idan.coupons.dao.CustomerDao;
@@ -32,7 +33,7 @@ public class CouponController {
 	 * @param coupon - the coupon as a Coupon object to add to the DB.
 	 * @throws ApplicationException
 	 */
-	public void createCoupon(Coupon coupon)throws ApplicationException{
+	public void createCoupon(CouponEntity coupon)throws ApplicationException{
 		//We validate the creation of a new coupon
 		validateCreateCoupon(coupon);
 		
@@ -46,18 +47,12 @@ public class CouponController {
 	 * @return Coupon Object correspond to the provided ID.
 	 * @throws ApplicationException
 	 */
-	public Coupon getCouponByCouponId(Long couponId) throws ApplicationException{
+	public CouponEntity getCouponByCouponId(Long couponId) throws ApplicationException{
 		if(couponId==null) {
 			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
 					+"  Bad input inserted, null value.");
 		}
-		Coupon coupon = this.couponDao.getCouponByCouponId(couponId);
-		if (coupon == null) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupon with ID " + couponId + ".");
-		}
-		
-		return coupon;
+		return this.couponDao.getCouponByCouponId(couponId);
 	}
 	
 	/**
@@ -65,14 +60,9 @@ public class CouponController {
 	 * @return List collection of all the coupons in the coupon table.
 	 * @throws ApplicationException
 	 */
-	public List<Coupon> getAllCoupons() throws ApplicationException{
+	public List<CouponEntity> getAllCoupons() throws ApplicationException{
 		
-		List<Coupon> coupons = couponDao.getAllCoupons();
-		
-		if(coupons.isEmpty()) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupons in data base.");
-		}
+		List<CouponEntity> coupons = couponDao.getAllCoupons();
 		
 		return coupons;
 		
@@ -83,13 +73,13 @@ public class CouponController {
 	 * @param couponID - the couponID as a long to remove from the DB.
 	 * @throws ApplicationException
 	 */
-	public void removeCouponByID(Long couponID) throws ApplicationException {
+	public void removeCouponByCouponID(Long couponID) throws ApplicationException {
 		
 		if(couponID==null) {
 			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
 					+"  Bad input inserted, null value.");
 		}
-		couponDao.removeCouponByID(couponID);
+		couponDao.removeCouponByCouponID(couponID);
 		
 	}
 	
@@ -105,12 +95,12 @@ public class CouponController {
 					+"  Bad input inserted, null value.");
 		}
 		couponDao.removeBoughtCouponByCouponIDandCustomerID(couponID, customerID);
-		
+		// TODO change back
 		// Updating the amount of the coupon
-		Coupon coupon = couponDao.getCouponByCouponId(couponID);
-		int amount = coupon.getCouponAmount() + 1;
-		coupon.setCouponAmount(amount);
-		couponDao.updateCoupon(coupon);
+//		Coupon coupon = couponDao.getCouponByCouponId(couponID);
+//		int amount = coupon.getCouponAmount() + 1;
+//		coupon.setCouponAmount(amount);
+//		couponDao.updateCoupon(coupon);
 	}
 	
 //	/**
@@ -127,7 +117,7 @@ public class CouponController {
 	 * @param coupon- the coupon as a Coupon object to be updated in the DB.
 	 * @throws ApplicationException
 	 */
-	public void updateCoupon(Coupon coupon) throws ApplicationException {
+	public void updateCoupon(CouponEntity coupon) throws ApplicationException {
 		
 		//We validate the creation of a new coupon
 		validateUpdateCoupon(coupon);
@@ -143,14 +133,10 @@ public class CouponController {
 	 * @returnList collection of all the coupons in the coupon table of the requested type.
 	 * @throws ApplicationException
 	 */
-	public List<Coupon> getCouponByType(CouponType type) throws ApplicationException{
+	public List<CouponEntity> getCouponByType(CouponType couponType) throws ApplicationException{
 		
-		List<Coupon> coupons = couponDao.getCouponByType(type);
+		List<CouponEntity> coupons = couponDao.getCouponByType(couponType);
 		
-		if(coupons.isEmpty()) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupons with type " + type.toString() + ".");
-		}
 		
 		return coupons;
 		
@@ -181,7 +167,7 @@ public class CouponController {
 	 * @return List collection of all the coupons in the coupon table up to the requested price.
 	 * @throws ApplicationException
 	 */
-	public List<Coupon> getCouponsUpToPrice(Double price) throws ApplicationException{
+	public List<CouponEntity> getCouponsUpToPrice(Double price) throws ApplicationException{
 		if(price==null) {
 			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
 					+"  Bad input inserted, null value.");
@@ -191,12 +177,7 @@ public class CouponController {
 					+" Invalid price entered: " + price + ".");
 		}
 		
-		List<Coupon> coupons = couponDao.getCouponsUpToPrice(price);
-		
-		if(coupons.isEmpty()) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupons below price of " + price + ".");
-		}
+		List<CouponEntity> coupons = couponDao.getCouponsUpToPrice(price);
 		
 		return coupons;
 		
@@ -208,19 +189,14 @@ public class CouponController {
 	 * @return List collection of all the coupons in the coupon table up to the requested date.
 	 * @throws ApplicationException
 	 */
-	public List<Coupon> getCouponsUpToEndDate(String endDate) throws ApplicationException{
+	public List<CouponEntity> getCouponsUpToEndDate(String endDate) throws ApplicationException{
 		
 		if(!ValidationUtils.isValidDateFormat(endDate)) {
 			throw new ApplicationException(ErrorType.INVALID_PARAMETER, DateUtils.getCurrentDateAndTime()
 					+" Invalid date format entered: " + endDate + ".");
 		}
 		
-		List<Coupon> coupons = couponDao.getCouponsUpToEndDate(endDate);
-		
-		if(coupons.isEmpty()) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupons that end before " + DateUtils.ConvertForDisplay(endDate) + ".");
-		}
+		List<CouponEntity> coupons = couponDao.getCouponsUpToEndDate(endDate);
 		
 		return coupons;
 		
@@ -232,18 +208,13 @@ public class CouponController {
 	 * @return List collection of all the coupons in the coupon table issued by the requested company.
 	 * @throws ApplicationException
 	 */
-	public List<Coupon> getCouponsByCompanyID(Long companyID) throws ApplicationException{
+	public List<CouponEntity> getCouponsByCompanyID(Long companyID) throws ApplicationException{
 		if(companyID==null) {
 			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
 					+"  Bad input inserted, null value.");
 		}
 		
-		List<Coupon> coupons = couponDao.getCouponsByCompanyID(companyID);
-		
-		if(coupons.isEmpty()) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupons of asked company in database in data base.");
-		}
+		List<CouponEntity> coupons = couponDao.getCouponsByCompanyID(companyID);
 		
 		return coupons;
 		
@@ -271,13 +242,8 @@ public class CouponController {
 		
 	}
 	
-	public List<Coupon> getNewestCoupon() throws ApplicationException{
-		List<Coupon> coupons = couponDao.getNewestCoupon();
-		
-		if(coupons.isEmpty()) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupons in data base.");
-		}
+	public List<CouponEntity> getNewestCoupon() throws ApplicationException{
+		List<CouponEntity> coupons = couponDao.getNewestCoupon();
 		
 		return coupons;
 	}
@@ -298,7 +264,7 @@ public class CouponController {
 			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
 					+"  Bad input inserted, null value of customerID.");
 		}
-		Coupon couponToBuy = this.couponDao.getCouponByCouponId(couponID);
+		CouponEntity couponToBuy = this.couponDao.getCouponByCouponId(couponID);
 		
 		if(couponToBuy==null) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
@@ -323,7 +289,7 @@ public class CouponController {
 		
 		// After purchase the amount of the coupon is updated in the DB
 		couponToBuy.setCouponAmount(--couponAmount);
-		this.couponDao.updateCoupon(couponToBuy);
+//		this.couponDao.updateCoupon(couponToBuy);
 		
 		
 	}
@@ -338,12 +304,11 @@ public class CouponController {
 	 * @throws ApplicationException
 	 */
 	public void deleteExpiredCoupon() throws ApplicationException {
-
+//		CouponDao couponDao = new CouponDao();
 		// Getting today's date.
 		GregorianCalendar today = new GregorianCalendar();
 
 		String todayStr = DateUtils.dateToStrConverter(today);
-		
 		couponDao.removeCouponByEndDate(todayStr);
 		
 	}
@@ -353,7 +318,7 @@ public class CouponController {
 	 * @param coupon - Coupon object to be validated.
 	 * @throws ApplicationException
 	 */
-	private void validateCreateCoupon(Coupon coupon) throws ApplicationException{
+	private void validateCreateCoupon(CouponEntity coupon) throws ApplicationException{
 		
 		validateCoupon(coupon);
 		
@@ -372,7 +337,7 @@ public class CouponController {
 	 * @param coupon - Coupon object to be validated.
 	 * @throws ApplicationException
 	 */
-	private void validateUpdateCoupon(Coupon coupon) throws ApplicationException {
+	private void validateUpdateCoupon(CouponEntity coupon) throws ApplicationException {
 		validateCoupon(coupon);
 		
 		//We check if the change to coupon's name is already exist in the DB
@@ -390,7 +355,7 @@ public class CouponController {
 	 * @param company - company object to validate.
 	 * @throws ApplicationException
 	 */
-	private void validateCoupon(Coupon coupon) throws ApplicationException {
+	private void validateCoupon(CouponEntity coupon) throws ApplicationException {
 		
 		List<InputErrorType> errorTypes = new ArrayList<InputErrorType>();
 		boolean isDateValide = true;

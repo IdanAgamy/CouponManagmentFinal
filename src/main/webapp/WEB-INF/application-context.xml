@@ -25,6 +25,8 @@
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
+	
+	<!-- <bean id="doOnStartup" class="com.idan.coupons.servlets.InitiationServlet" init-method="init"/>  -->
 	<!--Support for annotations such as @RequestMapping @RequestBody etc -->
 	<mvc:annotation-driven />
 
