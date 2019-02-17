@@ -207,7 +207,7 @@ public class CouponApi {
 	 */
 	@RequestMapping(value ="/purchasedCoupons", method = RequestMethod.GET)
 	//http://localhost:8080/CouponManagmentSystemVer3/coupons/purchasedCoupons
-	public List<Coupon> getCouponsByCustomerID(HttpServletRequest request) throws ApplicationException{
+	public List<CouponEntity> getCouponsByCustomerID(HttpServletRequest request) throws ApplicationException{
 
 		String customerIDStr = (String) request.getAttribute("userID");
 		if(customerIDStr != null) {

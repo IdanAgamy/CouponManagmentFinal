@@ -8,11 +8,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.idan.coupons.beans.Coupon;
 import com.idan.coupons.beans.CouponEntity;
+import com.idan.coupons.beans.CustomerEntity;
 //import com.idan.coupons.dao.CompanyDao;
 import com.idan.coupons.dao.CouponDao;
+import com.idan.coupons.dao.CustomerDao;
 //import com.idan.coupons.dao.CustomerDao;
 import com.idan.coupons.enums.CouponType;
 import com.idan.coupons.enums.ErrorType;
@@ -24,9 +27,12 @@ import com.idan.coupons.utils.ValidationUtils;
 
 @Controller
 public class CouponController {
-	
+
 	@Autowired
 	private CouponDao couponDao;
+	
+	@Autowired
+	private CustomerDao customerDao;
 	
 	/**
 	 * Creating a coupon in the DB.
@@ -95,12 +101,6 @@ public class CouponController {
 					+"  Bad input inserted, null value.");
 		}
 		couponDao.removeBoughtCouponByCouponIDandCustomerID(couponID, customerID);
-		// TODO change back
-		// Updating the amount of the coupon
-//		Coupon coupon = couponDao.getCouponByCouponId(couponID);
-//		int amount = coupon.getCouponAmount() + 1;
-//		coupon.setCouponAmount(amount);
-//		couponDao.updateCoupon(coupon);
 	}
 	
 //	/**
@@ -226,12 +226,12 @@ public class CouponController {
 	 * @return List collection of all the coupons in the coupon table bought by the requested customer.
 	 * @throws ApplicationException
 	 */
-	public List<Coupon> getCouponsByCustomerID(Long customerID) throws ApplicationException{
+	public List<CouponEntity> getCouponsByCustomerID(Long customerID) throws ApplicationException{
 		if(customerID==null) {
 			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
 					+"  Bad input inserted, null value.");
 		}
-		List<Coupon> coupons = couponDao.getCouponsByCustomerID(customerID);
+		List<CouponEntity> coupons = couponDao.getCouponsByCustomerID(customerID);
 		
 		if(coupons.isEmpty()) {
 			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
@@ -254,6 +254,7 @@ public class CouponController {
 	 * @param couponID - Long parameter of the coupon ID.
 	 * @throws ApplicationException
 	 */
+	@Transactional(propagation=Propagation.REQUIRED)
 	public void buyCoupon(Long customerID, Long couponID) throws ApplicationException {
 		if(couponID==null) {
 			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
@@ -284,8 +285,8 @@ public class CouponController {
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, DateUtils.getCurrentDateAndTime()
 					+" Coupon already purchesed.");
 		}
-		
-		this.couponDao.buyCoupon(customerID, couponID);
+		CustomerEntity customer = this.customerDao.getCustomerByCustomerId(customerID);
+		this.couponDao.buyCoupon(customer, couponID);
 		
 		// After purchase the amount of the coupon is updated in the DB
 		couponToBuy.setCouponAmount(--couponAmount);

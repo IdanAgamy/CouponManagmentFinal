@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-//import java.util.List;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -19,9 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idan.coupons.beans.Coupon;
 import com.idan.coupons.beans.CouponEntity;
+import com.idan.coupons.beans.CustomerEntity;
 import com.idan.coupons.enums.CouponType;
 import com.idan.coupons.enums.ErrorType;
-import com.idan.coupons.enums.OrderType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.JdbcUtils;
@@ -128,33 +126,33 @@ public class CouponDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void removeBoughtCouponByCouponIDandCustomerID(Long couponID, Long customerID) throws ApplicationException {
-		
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		
-		try {
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query.
-			String sql = "DELETE FROM customer_coupon WHERE CouponID = ? and CustomerID =?;";
-			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setLong(1, couponID);
-			preparedStatement.setLong(2, customerID);
 
-			preparedStatement.executeUpdate();
-			
+		try {
+			CouponEntity coupon = this.getCouponByCouponId(couponID);
+			List<CustomerEntity> purchasers = coupon.getPurchasers();
+			CustomerEntity customer = null;
+			for(CustomerEntity purchaser: purchasers) {
+				if(purchaser.getCustomerId().equals(customerID)) {
+					customer = purchaser;
+					break;
+				}
+			}
+			if(customer != null) {
+				purchasers.remove(customer);
+				coupon.setCouponAmount(coupon.getCouponAmount() + 1);
+			} else {
+				throw new ApplicationException( ErrorType.INVALID_PARAMETER, DateUtils.getCurrentDateAndTime() + "Client had not purchase coupon.");
+			}
 		}
 		
-		catch (SQLException e) {
-			e.printStackTrace();
+		catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, removeBoughtCouponByID(); FAILED");
 		}
-		
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement);
-		}
+//		
+//		finally {
+//			JdbcUtils.closeResources(connection, preparedStatement);
+//		}
 		
 	}
 
@@ -295,48 +293,24 @@ public class CouponDao{
 	 * @return List collection of all the coupons in the coupon table bought by the requested customer.
 	 * @throws ApplicationException 
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional(propagation=Propagation.REQUIRED)
-	public List<Coupon> getCouponsByCustomerID(Long customerID) throws ApplicationException{
-		
-		List<Coupon> couponsByCustomer = new ArrayList<Coupon>();
-		
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
+	public List<CouponEntity> getCouponsByCustomerID(Long customerID) throws ApplicationException{
 
 		try {
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
+			List<CouponEntity> coupons;
+			Query getQuery = entityManager.createQuery("SELECT coupon FROM CouponEntity As coupon JOIN coupon.purchasers purchaser WHERE purchaser.customerId =:customerIdObj");
+			getQuery.setParameter("customerIdObj", customerID);
+			coupons = getQuery.getResultList();
+			return coupons;
+		} catch (NoResultException e) {
+			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
+					+" No coupon were made by company with ID: " + customerID + ".");
 
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM coupon c INNER JOIN customer_coupon cc ON c.CouponID = cc.CouponID WHERE cc.CustomerID = ?;";	
-			preparedStatement = connection.prepareStatement(sql);
-			
-			preparedStatement.setLong(1, customerID);
-			
-		
-			
-			resultSet = preparedStatement.executeQuery();
-
-			// Looping on the received result to add to a list of Coupon objects.
-			while (resultSet.next()) {
-				couponsByCustomer.add(extractCouponFromResultSet(resultSet));
-			}
-
-			
-		}
-
-		catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, getCouponsByCustomerID(); FAILED");
 		}
-
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		}
-		
-		return couponsByCustomer;
 	}
 	
 
@@ -367,35 +341,37 @@ public class CouponDao{
 	 * @throws ApplicationException 
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
-	public void buyCoupon(Long customerID, Long couponID) throws ApplicationException {
+	public void buyCoupon(CustomerEntity customer, Long couponID) throws ApplicationException {
 		
-		PreparedStatement preparedStatement = null;
-		Connection connection = null;
+//		PreparedStatement preparedStatement = null;
+//		Connection connection = null;
 
 		try {
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-
-			// Creating a string which will contain the query.
-			String sql = "INSERT INTO customer_coupon (CustomerID, CouponID) VALUES (?, ?);";
-
-			preparedStatement= connection.prepareStatement(sql);
-
-			preparedStatement.setLong(1, customerID);
-			preparedStatement.setLong(2, couponID);
-
-		
-			preparedStatement.executeUpdate();
+			CouponEntity coupon = this.getCouponByCouponId(couponID);
+			coupon.addPurchesers(customer);
+//			// Getting a connection to the DB.
+//			connection = JdbcUtils.getConnection();
+//
+//			// Creating a string which will contain the query.
+//			String sql = "INSERT INTO customer_coupon (CustomerID, CouponID) VALUES (?, ?);";
+//
+//			preparedStatement= connection.prepareStatement(sql);
+//
+//			preparedStatement.setLong(1, customerID);
+//			preparedStatement.setLong(2, couponID);
+//
+//		
+//			preparedStatement.executeUpdate();
 		} 
 
-		catch (SQLException e) {
+		catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, buyCoupon(); FAILED");
 		} 
-
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement);
-		}
+//
+//		finally {
+//			JdbcUtils.closeResources(connection, preparedStatement);
+//		}
 		
 	}
 

@@ -1,10 +1,16 @@
 package com.idan.coupons.beans;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="customer")
@@ -23,6 +29,10 @@ public class CustomerEntity {
 
 	@Column(name="CustomerEmail", nullable=false)
 	private String customerEmail;
+	
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "purchasers")
+	@JsonIgnore
+	private List<CouponEntity> purchases;
 	
 	public Long getCustomerId() {
 		return customerId;
@@ -47,6 +57,12 @@ public class CustomerEntity {
 	}
 	public void setCustomerEmail(String customerEmail) {
 		this.customerEmail = customerEmail;
+	}
+	public List<CouponEntity> getPurchases() {
+		return purchases;
+	}
+	public void setPurchases(List<CouponEntity> purchases) {
+		this.purchases = purchases;
 	}
 	public CustomerEntity() {
 	}

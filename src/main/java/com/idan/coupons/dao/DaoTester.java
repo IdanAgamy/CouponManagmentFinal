@@ -1,24 +1,34 @@
-//
-//package com.idan.coupons.dao;
-//
-//import java.io.IOException;
-//import java.sql.Connection;
-//import java.sql.PreparedStatement;
-//import java.sql.SQLException;
-//import java.util.List;
-//
-//import com.idan.coupons.beans.Company;
-//import com.idan.coupons.beans.Coupon;
-//import com.idan.coupons.beans.Customer;
-//import com.idan.coupons.enums.CouponType;
-//import com.idan.coupons.enums.ErrorType;
-//import com.idan.coupons.enums.OrderType;
-//import com.idan.coupons.exceptions.ApplicationException;
-//import com.idan.coupons.utils.JdbcUtils;
-//
-//public class DaoTester {
-//	
-//	public static void main(String[] args) throws SQLException, InterruptedException, ApplicationException, IOException {
+
+package com.idan.coupons.dao;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.idan.coupons.beans.Company;
+import com.idan.coupons.beans.Coupon;
+import com.idan.coupons.beans.CouponEntity;
+import com.idan.coupons.beans.Customer;
+import com.idan.coupons.beans.CustomerEntity;
+import com.idan.coupons.enums.CouponType;
+import com.idan.coupons.enums.ErrorType;
+import com.idan.coupons.enums.OrderType;
+import com.idan.coupons.exceptions.ApplicationException;
+import com.idan.coupons.utils.JdbcUtils;
+
+public class DaoTester {
+	
+	public static void main(String[] args) throws SQLException, InterruptedException, ApplicationException, IOException {
+		CouponEntity coupon = new CouponEntity();
+		coupon.setPurchasers(new ArrayList<>());
+		CustomerEntity c1 = new CustomerEntity();
+		coupon.addPurchesers(c1);
+		coupon.removePurchesers(c1);
+		
+		
 //		Connection conection = JdbcUtils.getConnection();
 //		Thread.sleep(3000);
 //		
@@ -59,7 +69,7 @@
 ////		isCouponTitleExistForUpdateTest(cd);
 ////		isCouponAlreadyPurchasedByCustomerIDTest(cd);
 //		
-//	}
+	}
 //	
 //	private static void companyTest() {
 //		CompanyDao cd = new CompanyDao();
@@ -760,4 +770,4 @@
 //		System.out.println(message);
 //		System.in.read();
 //	}
-//}
+}

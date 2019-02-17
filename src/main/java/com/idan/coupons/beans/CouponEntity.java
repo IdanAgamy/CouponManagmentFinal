@@ -2,16 +2,17 @@ package com.idan.coupons.beans;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.idan.coupons.enums.CouponType;
 
 @Entity
@@ -50,8 +51,23 @@ public class CouponEntity {
 	@Column(name="CompanyID", nullable=false)
 	private Long companyID;
 	
-//	@ManyToMany(cascade=CascadeType.MERGE, mappedBy="purchase", fetch = FetchType.LAZY)
-//	private List<CustomerEntity> purchasers;
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "customer_coupon",
+	joinColumns = {
+			@JoinColumn(
+					name = "CouponID",
+					referencedColumnName = "couponId"
+					)
+	},
+	inverseJoinColumns = {
+			@JoinColumn(
+					name = "CustomerID",
+					referencedColumnName = "customerId"
+					)
+	}
+			)
+	@JsonIgnore
+	private List<CustomerEntity> purchasers;
 	
 	public Long getCouponId() {
 		return couponId;
@@ -119,12 +135,12 @@ public class CouponEntity {
 	}
 	
 
-//	public List<CustomerEntity> getPurchasers() {
-//		return purchasers;
-//	}
-//	public void setPurchasers(List<CustomerEntity> purchasers) {
-//		this.purchasers = purchasers;
-//	}
+	public List<CustomerEntity> getPurchasers() {
+		return purchasers;
+	}
+	public void setPurchasers(List<CustomerEntity> purchasers) {
+		this.purchasers = purchasers;
+	}
 	
 	public CouponEntity() {
 		super();
@@ -193,8 +209,12 @@ public class CouponEntity {
 		return true;
 	}
 	
-//	public void addKids(CustomerEntity purcheser) {
-//		this.purchasers.add(purcheser);
-//	}
+	public void addPurchesers(CustomerEntity purcheser) {
+		this.purchasers.add(purcheser);
+	}
+	
+	public void removePurchesers(CustomerEntity purcheser) {
+		this.purchasers.remove(purcheser);
+	}
 
 }
