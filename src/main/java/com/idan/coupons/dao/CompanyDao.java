@@ -85,9 +85,6 @@ public class CompanyDao{
 		
 		try {
 			return entityManager.find(CompanyEntity.class, companyId);
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No company with ID: " + companyId + ".");
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getCompanyByComapnyId(); FAILED");
 		}
@@ -104,14 +101,13 @@ public class CompanyDao{
 	public CompanyEntity getCompanyByComapnyName(String companyName) throws ApplicationException {
 		
 		try {
-			CompanyEntity company;
 			Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company WHERE companyName = :CompanyNameObj ");
 			getQuery.setParameter("CompanyNameObj", companyName);
-			company = (CompanyEntity) getQuery.getSingleResult();
+			CompanyEntity company = (CompanyEntity) getQuery.getSingleResult();
 			return company;
 		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No company with name: " + companyName + ".");
+			// getSingleResult throws a NoResultException in case of no results, so it will be replaced simple null.
+			return null;
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getCompanyByComapnyName(); FAILED");
 		}
@@ -132,8 +128,8 @@ public class CompanyDao{
 			CompanyEntity company = (CompanyEntity) getQuery.getSingleResult();
 			return company;
 		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No company with email: " + companyEmail + ".");
+			// getSingleResult throws a NoResultException in case of no results, so it will be replaced simple null.
+			return null;
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in getCompanyByComapnyEmail, getCompanyByComapnyName(); FAILED");
 		}
@@ -151,9 +147,6 @@ public class CompanyDao{
 		try {
 			Query getQuery = entityManager.createQuery("SELECT company FROM CompanyEntity As company");
 			companies = getQuery.getResultList();
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+"  No companies in data base.");
 		} catch (Exception e) {
 			throw new ApplicationException(e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CompanyDao, getAllCompanies(); FAILED");
 		}

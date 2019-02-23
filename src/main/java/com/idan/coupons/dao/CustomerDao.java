@@ -1,12 +1,5 @@
 package com.idan.coupons.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-//import java.util.ArrayList;
-//import java.util.List;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -18,13 +11,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.idan.coupons.beans.CompanyEntity;
-import com.idan.coupons.beans.Customer;
 import com.idan.coupons.beans.CustomerEntity;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
-import com.idan.coupons.utils.JdbcUtils;
 
 @Repository
 public class CustomerDao{
@@ -72,9 +62,6 @@ public class CustomerDao{
 		
 	}
 	
-	
-
-
 	/**
 	 * Sending a query to the DB to add a update a customer in the customer table. All the fields will be updated according to the ID of the Customer object.
 	 * @param company - the company as a Customer object to be updated in the DB.
@@ -83,15 +70,15 @@ public class CustomerDao{
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void updateCustomer(CustomerEntity customer) throws ApplicationException {
 
-			try {
-				entityManager.merge(customer);
-			}
-	
-			catch (Exception e) {
-//				In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-				throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CustomerDao, creatCompany(); FAILED");
-				}
+		try {
+			entityManager.merge(customer);
 		}
+
+		catch (Exception e) {
+//			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
+			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CustomerDao, creatCompany(); FAILED");
+		}
+	}
 
 
 	/**
@@ -106,9 +93,6 @@ public class CustomerDao{
 		try {
 			return entityManager.find(CustomerEntity.class, customerId);
 			
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No customer with ID: " + customerId + ".");
 		} catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CustomerDao, getCustomerByCustomerId(); FAILED");
@@ -132,9 +116,6 @@ public class CustomerDao{
 			getQuery.setParameter("customerNameObj", customerName);
 			customers = getQuery.getResultList();
 			return customers;
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No customer with name: " + customerName + ".");
 		}
 		catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
@@ -159,8 +140,8 @@ public class CustomerDao{
 			CustomerEntity customer = (CustomerEntity) getQuery.getSingleResult();
 			return customer;
 		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No customer with email: " + customerEmail + ".");
+			// getSingleResult throws a NoResultException in case of no results, so it will be replaced simple null.
+			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
@@ -179,22 +160,16 @@ public class CustomerDao{
 	@SuppressWarnings("unchecked")
 	@Transactional(propagation=Propagation.REQUIRED)
 	public List<CustomerEntity> getAllCustomers() throws ApplicationException{
-		
-
+	
 		try {
 			List<CustomerEntity> customers;
 			Query getQuery = entityManager.createQuery("SELECT customer FROM CustomerEntity As customer");
 			customers = getQuery.getResultList();
 			return customers;
-		}catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+"  No companies in data base.");
-		} 
-
-		catch (Exception e) {
+		} 	catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CustomerDao, getAllCustomers(); FAILED");
-			}
+		}
 		
 		
 	}

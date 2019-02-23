@@ -80,12 +80,7 @@ public class CompanyController {
 					+"  Bad input inserted, null value.");
 		}
 		CompanyEntity company = this.companyDao.getCompanyByComapnyId(companyId);
-		
-		if(company == null) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No company with ID: " + companyId + ".");
-		}
-		
+				
 		return company;
 		
 	}
@@ -104,12 +99,7 @@ public class CompanyController {
 		}
 		
 		CompanyEntity company = companyDao.getCompanyByComapnyName(companyName);
-		
-		if (company == null) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No company with name " + companyName + ".");
-		}
-		
+				
 		return company;
 		
 	}
@@ -128,11 +118,6 @@ public class CompanyController {
 		
 		CompanyEntity company = companyDao.getCompanyByComapnyEmail(companyEmail);
 		
-		if (company == null) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No company with name " + companyEmail + ".");
-		}
-		
 		return company;
 	}
 
@@ -143,15 +128,9 @@ public class CompanyController {
 	 */
 	public List<CompanyEntity> getAllCompanies() throws ApplicationException{
 		
-		List<CompanyEntity> companies = this.companyDao.getAllCompanies();
+		List<CompanyEntity> companies = this.companyDao.getAllCompanies();		
 		
-		if(companies.isEmpty()) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No companies in data base.");
-		}
-		
-		return companies;
-		
+		return companies;		
 		
 	}
 	

@@ -96,11 +96,6 @@ public class CustomerController {
 		
 		List<CustomerEntity> customers = customerDao.getCustomersByCustomerName(customerName);
 		
-		if (customers.isEmpty()) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No customer with name " + customerName + ".");
-		}
-		
 		return customers;
 	}
 
@@ -118,11 +113,6 @@ public class CustomerController {
 		
 		CustomerEntity customer = customerDao.getCustomerByCustomerEmail(customerEmail);
 		
-		if (customer == null) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No customer with email " + customerEmail + ".");
-		}
-		
 		return customer;
 	}
 
@@ -134,7 +124,6 @@ public class CustomerController {
 	public List<CustomerEntity> getAllCustomers() throws ApplicationException{
 		
 		List<CustomerEntity> customers = this.customerDao.getAllCustomers();
-		
 		
 		return customers;
 		

@@ -12,15 +12,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.idan.coupons.beans.CouponEntity;
-import com.idan.coupons.beans.CustomerEntity;
-//import com.idan.coupons.dao.CompanyDao;
 import com.idan.coupons.dao.CouponDao;
-import com.idan.coupons.dao.CustomerDao;
-//import com.idan.coupons.dao.CustomerDao;
 import com.idan.coupons.enums.CouponType;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.InputErrorType;
-//import com.idan.coupons.enums.OrderType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
@@ -30,9 +25,6 @@ public class CouponController {
 
 	@Autowired
 	private CouponDao couponDao;
-	
-	@Autowired
-	private CustomerDao customerDao;
 	
 	/**
 	 * Creating a coupon in the DB.
@@ -95,12 +87,16 @@ public class CouponController {
 	 * @param customerID - Long parameter of the customer ID.
 	 * @throws ApplicationException
 	 */
+	@Transactional(propagation=Propagation.REQUIRED)
 	public void removeBoughtCouponByCouponIDandCustomerID(Long couponID, Long customerID) throws ApplicationException {
 		if(couponID ==null || customerID == null) {
 			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
 					+"  Bad input inserted, null value.");
 		}
-		couponDao.removeBoughtCouponByCouponIDandCustomerID(couponID, customerID);
+		CouponEntity coupon = couponDao.getCouponByCouponId(couponID);
+		if(couponDao.removeBoughtCouponByCouponIDandCustomerID(coupon, customerID)) {
+			coupon.increaseAmountByOne();
+		}
 	}
 	
 //	/**
@@ -135,31 +131,11 @@ public class CouponController {
 	 */
 	public List<CouponEntity> getCouponByType(CouponType couponType) throws ApplicationException{
 		
-		List<CouponEntity> coupons = couponDao.getCouponByType(couponType);
-		
+		List<CouponEntity> coupons = couponDao.getCouponByType(couponType);		
 		
 		return coupons;
 		
 	}
-	
-//	/**
-//	 * 
-//	 * @param orderType
-//	 * @return
-//	 * @throws ApplicationException
-//	 */
-//	public List<Coupon> getCouponInOrderByPrice(OrderType orderType) throws ApplicationException{
-//		
-//		List<Coupon> coupons = couponDao.getCouponInOrderByPrice(orderType);
-//		
-//		if(coupons.isEmpty()) {
-//			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-//					+ " No coupons in data base.");
-//		}
-//		
-//		return coupons;
-//		
-//	}
 	
 	/**
 	 * Getting a list of coupon from the DB up to a certain price.
@@ -233,11 +209,6 @@ public class CouponController {
 		}
 		List<CouponEntity> coupons = couponDao.getCouponsByCustomerID(customerID);
 		
-		if(coupons.isEmpty()) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupons bought by customer.");
-		}
-		
 		return coupons;
 		
 	}
@@ -267,15 +238,8 @@ public class CouponController {
 		}
 		CouponEntity couponToBuy = this.couponDao.getCouponByCouponId(couponID);
 		
-		if(couponToBuy==null) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupon exist.");
-		}
-		
-		int couponAmount = couponToBuy.getCouponAmount();
-		
 		// Checking if there are remaining amount for coupon.
-		if(couponAmount <= 0) {
+		if(couponToBuy.getCouponAmount() <= 0) {
 			
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, DateUtils.getCurrentDateAndTime()
 					+" Coupon out of stock.");
@@ -285,11 +249,10 @@ public class CouponController {
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, DateUtils.getCurrentDateAndTime()
 					+" Coupon already purchesed.");
 		}
-		CustomerEntity customer = this.customerDao.getCustomerByCustomerId(customerID);
-		this.couponDao.buyCoupon(customer, couponID);
+		this.couponDao.buyCoupon(customerID, couponToBuy);
 		
 		// After purchase the amount of the coupon is updated in the DB
-		couponToBuy.setCouponAmount(--couponAmount);
+		couponToBuy.reduceAmountByOne();
 //		this.couponDao.updateCoupon(couponToBuy);
 		
 		

@@ -1,9 +1,5 @@
 package com.idan.coupons.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -11,25 +7,26 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.idan.coupons.beans.Coupon;
 import com.idan.coupons.beans.CouponEntity;
 import com.idan.coupons.beans.CustomerEntity;
 import com.idan.coupons.enums.CouponType;
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
-import com.idan.coupons.utils.JdbcUtils;
-//TODO implement Transactional
 
 @Repository
 public class CouponDao{
 
 	@PersistenceContext(unitName="couponSystem")
 	private EntityManager entityManager;
+	
+	@Autowired
+	private CustomerDao customerdao;
 	
 	/**
 	 * Sending a query to the DB to add a new coupon to the coupon table.
@@ -61,11 +58,7 @@ public class CouponDao{
 
 		try {
 			return entityManager.find(CouponEntity.class, couponId);
-			
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupon with ID: " + couponId + ".");
-
+		
 		} catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, getCouponByCouponId(); FAILED");
@@ -88,10 +81,6 @@ public class CouponDao{
 			Query getQuery = entityManager.createQuery("SELECT coupon FROM CouponEntity As coupon");
 			coupons = getQuery.getResultList();
 			return coupons;
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupon in data base.");
-
 		} catch (Exception e) {
 			e.printStackTrace();
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
@@ -112,7 +101,6 @@ public class CouponDao{
 		try {
 			entityManager.remove(coupon);
 		} catch (Exception e) {
-			e.printStackTrace();
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, removeCouponByID(); FAILED");
 		}
@@ -125,34 +113,15 @@ public class CouponDao{
 	 * @throws ApplicationException 
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
-	public void removeBoughtCouponByCouponIDandCustomerID(Long couponID, Long customerID) throws ApplicationException {
+	public boolean removeBoughtCouponByCouponIDandCustomerID(CouponEntity coupon, Long customerID) throws ApplicationException {
 
 		try {
-			CouponEntity coupon = this.getCouponByCouponId(couponID);
-			List<CustomerEntity> purchasers = coupon.getPurchasers();
-			CustomerEntity customer = null;
-			for(CustomerEntity purchaser: purchasers) {
-				if(purchaser.getCustomerId().equals(customerID)) {
-					customer = purchaser;
-					break;
-				}
-			}
-			if(customer != null) {
-				purchasers.remove(customer);
-				coupon.setCouponAmount(coupon.getCouponAmount() + 1);
-			} else {
-				throw new ApplicationException( ErrorType.INVALID_PARAMETER, DateUtils.getCurrentDateAndTime() + "Client had not purchase coupon.");
-			}
-		}
-		
-		catch (Exception e) {
+			CustomerEntity customer = this.customerdao.getCustomerByCustomerId(customerID);
+			return coupon.removePurchesers(customer);
+		}	catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, removeBoughtCouponByID(); FAILED");
 		}
-//		
-//		finally {
-//			JdbcUtils.closeResources(connection, preparedStatement);
-//		}
 		
 	}
 
@@ -192,11 +161,6 @@ public class CouponDao{
 			getQuery.setParameter("customerTypeObj", couponType);
 			coupons = getQuery.getResultList();
 			return coupons;
-			
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupon with type: " + couponType + ".");
-
 		} catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, getCouponByType(); FAILED");
@@ -221,10 +185,6 @@ public class CouponDao{
 			getQuery.setParameter("couponPriceObj", price);
 			coupons = getQuery.getResultList();
 			return coupons;
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupon below price: " + price + ".");
-
 		} catch (Exception e) {
 			e.printStackTrace();
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
@@ -249,9 +209,8 @@ public class CouponDao{
 			coupons = getQuery.getResultList();
 			return coupons;
 		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupon expired before: " + endDate + ".");
-
+			// getSingleResult throws a NoResultException in case of no results, so it will be replaced simple null.
+			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
@@ -277,10 +236,6 @@ public class CouponDao{
 			getQuery.setParameter("companyIDObj", companyID);
 			coupons = getQuery.getResultList();
 			return coupons;
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupon were made by company with ID: " + companyID + ".");
-
 		} catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, getCouponsByCompanyID(); FAILED");
@@ -303,10 +258,6 @@ public class CouponDao{
 			getQuery.setParameter("customerIdObj", customerID);
 			coupons = getQuery.getResultList();
 			return coupons;
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupon were made by company with ID: " + customerID + ".");
-
 		} catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, getCouponsByCustomerID(); FAILED");
@@ -324,10 +275,6 @@ public class CouponDao{
 			getQuery.setMaxResults(5);
 			coupons = getQuery.getResultList();
 			return coupons;
-		} catch (NoResultException e) {
-			throw new ApplicationException(ErrorType.NO_RETURN_OBJECT, DateUtils.getCurrentDateAndTime()
-					+" No coupon in data base.");
-
 		} catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, getCouponsByCustomerID(); FAILED");
@@ -341,37 +288,17 @@ public class CouponDao{
 	 * @throws ApplicationException 
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
-	public void buyCoupon(CustomerEntity customer, Long couponID) throws ApplicationException {
-		
-//		PreparedStatement preparedStatement = null;
-//		Connection connection = null;
+	public void buyCoupon(Long customerID, CouponEntity coupon) throws ApplicationException {
 
 		try {
-			CouponEntity coupon = this.getCouponByCouponId(couponID);
+			CustomerEntity customer = this.customerdao.getCustomerByCustomerId(customerID);
 			coupon.addPurchesers(customer);
-//			// Getting a connection to the DB.
-//			connection = JdbcUtils.getConnection();
-//
-//			// Creating a string which will contain the query.
-//			String sql = "INSERT INTO customer_coupon (CustomerID, CouponID) VALUES (?, ?);";
-//
-//			preparedStatement= connection.prepareStatement(sql);
-//
-//			preparedStatement.setLong(1, customerID);
-//			preparedStatement.setLong(2, couponID);
-//
-//		
-//			preparedStatement.executeUpdate();
 		} 
 
 		catch (Exception e) {
 //			In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, buyCoupon(); FAILED");
 		} 
-//
-//		finally {
-//			JdbcUtils.closeResources(connection, preparedStatement);
-//		}
 		
 	}
 
@@ -403,7 +330,7 @@ public class CouponDao{
 		try {
 			Query validationQuery = entityManager.createQuery("SELECT coupon FROM CouponEntity As coupon WHERE couponTitle =:couponTitleObj");
 			validationQuery.setParameter("couponTitleObj", couponTitle);
-			validationQuery.getFirstResult();
+			validationQuery.getSingleResult();
 			return true;
 		} catch (NoResultException e) {
 			return false;
@@ -424,32 +351,11 @@ public class CouponDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCouponTitleExistForUpdate(Long couponID, String couponTitle) throws ApplicationException {
-//		Connection connection = null;
-//		PreparedStatement preparedStatement = null;
-//		ResultSet resultSet = null;
-		
 		try {
 			Query validationQuery = entityManager.createQuery("SELECT coupon FROM CouponEntity As coupon WHERE couponTitle =:couponTitleObj AND NOT couponId = :couponIdObj");
 			validationQuery.setParameter("couponTitleObj", couponTitle);
 			validationQuery.setParameter("couponIdObj", couponID);
-			validationQuery.getFirstResult();
-//			// Getting a connection to the DB.
-//			connection = JdbcUtils.getConnection();
-//			
-//			// Creating a string which will contain the query.
-//			String sql = "SELECT * FROM coupon WHERE CouponTitle = ? AND NOT CouponID = ?; ";
-//			preparedStatement = connection.prepareStatement(sql);
-//			
-//			preparedStatement.setString(1, couponTitle);
-//			preparedStatement.setLong(2, couponID);
-//			
-//			resultSet = preparedStatement.executeQuery();
-//			
-//			// Checking if we got a reply with the requested data. If no data was received, returns true.
-//			if (!resultSet.next()) {
-//				return false;
-//			}
-			
+			validationQuery.getSingleResult();
 			return true;
 		} catch (NoResultException e) {
 			return false;
@@ -474,67 +380,19 @@ public class CouponDao{
 	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean isCouponAlreadyPurchasedByCustomerID(Long couponID, Long customerID) throws ApplicationException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		
+
 		try {
-			// Getting a connection to the DB.
-			connection = JdbcUtils.getConnection();
-			
-			// Creating a string which will contain the query.
-			String sql = "SELECT * FROM customer_coupon WHERE customerID = ? AND CouponID = ?; ";
-			preparedStatement = connection.prepareStatement(sql);
-			
-			preparedStatement.setLong(1, customerID);
-			preparedStatement.setLong(2, couponID);
-		
-			resultSet = preparedStatement.executeQuery();
-			
-			// Checking if we got a reply with the requested data. If no data was received, returns true.
-			if (!resultSet.next()) {
-				return false;
-			}
+			Query validationQuery = entityManager.createQuery("SELECT coupon FROM CouponEntity As coupon JOIN coupon.purchasers purchaser WHERE purchaser.customerId =:customerIdObj and coupon.couponId=:couponId");
+			validationQuery.setParameter("customerIdObj", customerID);
+			validationQuery.setParameter("couponId", couponID);
+			validationQuery.getSingleResult();
 			
 			return true;
-		}
-		
-		catch (SQLException e) {
-			e.printStackTrace();
+		} catch (NoResultException e) {
+			return false;
+		} catch (Exception e) {
 //		In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
-			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, isCouponTitleUpdateAvailable(); FAILED");
+			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, isCouponAlreadyPurchasedByCustomerID(); FAILED");
 		}
-		
-		finally {
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-		}
-	}
-
-
-	/**
-	 * Extract coupon's data by parameters from the database.
-	 * @param resultSet -  Data received from DB.
-	 * @return Coupon object made from the resultSet.
-	 * @throws SQLException.
-	 */
-	@Transactional(propagation=Propagation.REQUIRED)
-	private Coupon extractCouponFromResultSet(ResultSet resultSet) throws SQLException {
-		
-		Coupon coupon = new Coupon();
-		coupon.setCouponId(resultSet.getLong("CouponID"));
-		coupon.setCouponTitle(resultSet.getString("CouponTitle"));
-		coupon.setCouponStartDate(resultSet.getString("CouponStartDate"));
-		coupon.setCouponEndDate(resultSet.getString("CouponEndDate"));
-		coupon.setCouponAmount(resultSet.getInt("CouponAmount"));
-		coupon.setCouponType(CouponType.valueOf(resultSet.getString("CouponType")));
-		coupon.setCouponMessage(resultSet.getString("CouponMessage"));
-		coupon.setCouponPrice(resultSet.getDouble("CouponPrice"));
-		coupon.setCouponImage(resultSet.getString("CouponImage"));
-		coupon.setCompanyID(resultSet.getLong("companyID"));
-		
-		return coupon;
-	}
-
-
-	
+	}	
 }

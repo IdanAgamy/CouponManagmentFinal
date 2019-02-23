@@ -213,8 +213,16 @@ public class CouponEntity {
 		this.purchasers.add(purcheser);
 	}
 	
-	public void removePurchesers(CustomerEntity purcheser) {
-		this.purchasers.remove(purcheser);
+	public boolean removePurchesers(CustomerEntity purcheser) {
+		return this.purchasers.remove(purcheser);
+	}
+	
+	public void increaseAmountByOne() {
+		++this.couponAmount;
+	}
+	
+	public void reduceAmountByOne() {
+		--this.couponAmount;
 	}
 
 }
