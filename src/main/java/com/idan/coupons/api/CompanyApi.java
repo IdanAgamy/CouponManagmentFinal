@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.idan.coupons.beans.CompanyEntity;
 import com.idan.coupons.controller.CompanyController;
 import com.idan.coupons.exceptions.ApplicationException;
+import com.idan.coupons.utils.CookieUtil;
 import com.idan.coupons.utils.ValidationUtils;
 
 @CrossOrigin(origins="http://localhost:4200")
@@ -35,10 +36,8 @@ public class CompanyApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/companies/
 	public List<CompanyEntity> getAllCompanies() throws ApplicationException {
 		List<CompanyEntity> companies = companyController.getAllCompanies();
-//				System.out.println(companies);
 		return companies;
 	}
 
@@ -49,8 +48,7 @@ public class CompanyApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{companyId}", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/companies/5
-	public CompanyEntity getCompanyByComapnyId(@PathVariable("companyId") long companyId) throws ApplicationException{
+	public CompanyEntity getCompanyByComapnyId(@PathVariable("companyId") Long companyId) throws ApplicationException{
 		return companyController.getCompanyByComapnyId(companyId);
 	}
 
@@ -61,7 +59,6 @@ public class CompanyApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{companyName}/byCompanyName", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/companies/coca cola/byCompanyName
 	public CompanyEntity getCompanyByName(@PathVariable("companyName") String companyName) throws ApplicationException{
 		return companyController.getCompanyByComapnyName(companyName);
 	}
@@ -73,7 +70,6 @@ public class CompanyApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{companyEmail}/byCompanyEmail", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/companies/HP@gmail.com/byCompanyEmail
 	public CompanyEntity getCompanyByEmail(@PathVariable("companyEmail") String companyEmail) throws ApplicationException{
 		return companyController.getCompanyByComapnyEmail(companyEmail);
 	}
@@ -85,14 +81,14 @@ public class CompanyApi {
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public CompanyEntity createCompany(HttpServletRequest request, HttpServletResponse response, @RequestBody CompanyEntity company) throws ApplicationException{
-		if (company != null) {
-			companyController.createCompany(company);
+		
+		companyController.createCompany(company);
 			
-			// If company created, registration is complete and creating cookies.
-			request.getSession();					
-//			List<Cookie> loginCookies = CookieUtil.loginCookies(company);
-//			response = CookieUtil.addCookies(response, loginCookies);
-		}
+		// If company created, registration is complete and creating cookies.
+		request.getSession();					
+		List<Cookie> loginCookies = CookieUtil.loginCookies(company);
+		response = CookieUtil.addCookies(response, loginCookies);
+		
 		return company;
 	}
 
@@ -104,6 +100,8 @@ public class CompanyApi {
 	 */
 	@RequestMapping(method = RequestMethod.PUT)
 	public void updateUser (HttpServletRequest request,@RequestBody  CompanyEntity company) throws ApplicationException{
+		
+		
 		// Will update the company in the DB only if the changes are made by the admin or the same company.
 		ValidationUtils.ValidateUser(request, company.getCompanyId());
 		companyController.updateCompany(company);
@@ -116,35 +114,26 @@ public class CompanyApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{companyId}", method = RequestMethod.DELETE)
-	//http://localhost:8080/CouponManagmentSystemVer3/companies/10
-	public void removeCompany(HttpServletRequest request, HttpServletResponse response, @PathVariable("companyId") long companyId) throws ApplicationException{
+	public void removeCompany(HttpServletRequest request, HttpServletResponse response, @PathVariable("companyId") Long companyId) throws ApplicationException{
 
 		// Will update the company in the DB only if the changes are made by the admin or the same company.
 		ValidationUtils.ValidateUser(request, companyId);
+		
 		companyController.removeCompanyByCompanyID(companyId);
-		HttpSession session = request.getSession(false);
-		session.invalidate();
-		Cookie[] cookies = request.getCookies();
-		for(Cookie cookie: cookies) {
-		    cookie.setValue("");
-		    cookie.setMaxAge(0);
-		    cookie.setPath("/");
-		    response.addCookie(cookie);
+		
+		// If user is not admin, he will be logged out.
+		String userType = (String) request.getAttribute("request");
+		if (!userType.equals("ADMIN")) {
+			HttpSession session = request.getSession(false);
+			session.invalidate();
+			Cookie[] cookies = request.getCookies();
+			for (Cookie cookie : cookies) {
+				cookie.setValue("");
+				cookie.setMaxAge(0);
+				cookie.setPath("/");
+				response.addCookie(cookie);
+			} 
 		}
 	}
-
-
-
-
-	/* For debugging use only:
-	 * Content-Type      application/json
-	 *  Json object
-	 {
-		"companyName": "abba",
-		"companyPassword": "aa555456",
-		"companyEmail": "a@b",
-		"companyId":?
-	}
-	 */
 
 }

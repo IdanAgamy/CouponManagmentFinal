@@ -1,8 +1,5 @@
 package com.idan.coupons.threads;
 
-//import java.util.Calendar;
-//import java.util.GregorianCalendar;
-//import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,28 +18,6 @@ public class DeleteExpiredCouponTimerTask extends TimerTask{
 	@Autowired
 	private CouponController couponController;
 	private static final Logger logger = LogManager.getLogger(ExceptionsHandler.class);
-
-
-//	public long getOnceADay() {
-//		return onceADay;
-//	}
-
-//	public static void startDeleteExpiredCouponTimerTask() {
-//
-//		GregorianCalendar gc = new GregorianCalendar();
-//
-//		gc.set(Calendar.HOUR, 00);
-//		gc.set(Calendar.MINUTE, 00);
-//		gc.set(Calendar.SECOND, 00);
-//
-//		gc.add(Calendar.DAY_OF_MONTH, 1);
-//		
-////		gc.add(Calendar.SECOND, 10);
-//
-//		Timer timer = new Timer();
-//
-//		timer.schedule(new DeleteExpiredCouponTimerTask(), gc.getTime(), onceADay);
-//	}
 
 	@Override
 	public void run() {

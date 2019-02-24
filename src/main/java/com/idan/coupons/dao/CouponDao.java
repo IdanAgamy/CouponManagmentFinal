@@ -218,15 +218,14 @@ public class CouponDao{
 		}
 		
 	}
-	// CouponID, CouponTitle, CouponStartDate, CouponEndDate, CouponAmount, CouponType, CouponMessage, CouponPrice, CouponImage, companyID
 	
-	@SuppressWarnings("unchecked")
 	/**
 	 * Sending a query to the DB to get all the coupons in coupon table issued by the requested company.
 	 * @param companyID - Long parameter of the ID of the requested company.
 	 * @return List collection of all the coupons in the coupon table issued by the requested company.
 	 * @throws ApplicationException 
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional(propagation=Propagation.REQUIRED)
 	public List<CouponEntity> getCouponsByCompanyID(Long companyID) throws ApplicationException{
 
@@ -264,7 +263,11 @@ public class CouponDao{
 		}
 	}
 	
-
+	/**
+	 * Getting a list of coupon of the newest coupons from the DB.
+	 * @return List collection of the five newest coupons to display on the homepage.
+	 * @throws ApplicationException
+	 */
 	@SuppressWarnings("unchecked")
 	@Transactional(propagation=Propagation.REQUIRED)	
 	public List<CouponEntity> getNewestCoupon() throws ApplicationException{
@@ -302,6 +305,11 @@ public class CouponDao{
 		
 	}
 
+	/**
+	 * Delete coupons by endDate
+	 * @param endDate Coupon with endDate before this date will be deleted.
+	 * @throws ApplicationException
+	 */
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void removeCouponByEndDate(String endDate) throws ApplicationException {
 		
@@ -364,10 +372,6 @@ public class CouponDao{
 //		In case of SQL exception it will be sent as a cause of an application exception to the exception handler.
 			throw new ApplicationException( e, ErrorType.SYSTEM_ERROR, DateUtils.getCurrentDateAndTime() + "Error in CouponDao, isCouponTitleUpdateAvailable(); FAILED");
 		}
-//		
-//		finally {
-//			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
-//		}
 	}
 	
 	/**

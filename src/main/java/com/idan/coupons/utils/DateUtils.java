@@ -86,41 +86,6 @@ public class DateUtils {
 		sj.add(dateStrArr[2]);		
 		
 		return sj.toString();
-	}
-
-	
-//	public static String addYears(String dateStr, int yearsToAdd) {
-//		
-//		String[] dateStrArr = stringDevider(dateStr);
-//		
-//		dateStrArr[0] += yearsToAdd;
-//		
-//		return stringArrJoiner(dateStrArr);
-//		
-//		
-//	}
-//	
-//	public static String addMonths(String dateStr, int monthsToAdd) {
-//		
-//		String[] dateStrArr = stringDevider(dateStr);
-//		
-//		dateStrArr[1] += monthsToAdd;
-//		
-//		return stringArrJoiner(dateStrArr);
-//		
-//		
-//	}
-//	
-//	public static String addDays(String dateStr, int daysToAdd) {
-//		
-//		String[] dateStrArr = stringDevider(dateStr);
-//		
-//		dateStrArr[2] += daysToAdd;
-//		
-//		return stringArrJoiner(dateStrArr);
-//		
-//		
-//	}
-	
+	}	
 
 }

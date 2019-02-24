@@ -1,31 +1,17 @@
 package com.idan.coupons.servlets;
 
-//import java.io.IOException;
 import java.util.Calendar;
-//import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Timer;
 
 import javax.annotation.PostConstruct;
-//import javax.servlet.ServletException;
-//import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.idan.coupons.threads.DeleteExpiredCouponTimerTask;
-//import com.idan.coupons.threads.Harta;
 
-
-// TODO- make sure the necessity of this class.
-/**
- * Servlet implementation class InitiationServlet.
- * This servlet is responsible for every method that needed to be start on load of server
- */
-//@WebServlet("/InitiationServlet")
 @Component
 public class InitiationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

@@ -1,8 +1,6 @@
 package com.idan.coupons.controller;
 
 import java.util.ArrayList;
-//import java.util.ArrayList;
-//import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -32,7 +30,7 @@ public class CouponController {
 	 * @throws ApplicationException
 	 */
 	public void createCoupon(CouponEntity coupon)throws ApplicationException{
-		//We validate the creation of a new coupon
+		//We validate the creation of a new coupon, including null values.
 		validateCreateCoupon(coupon);
 		
 		//If we didn't catch any exception, we call the 'createCoupon' method.
@@ -99,15 +97,6 @@ public class CouponController {
 		}
 	}
 	
-//	/**
-//	 * 
-//	 * @param customerID
-//	 * @throws ApplicationException
-//	 */
-//	public void removeCustomerPurchasesByCustomerID(Long customerID) throws ApplicationException {
-//		couponDao.removeCustomerPurchasesByCustomerID(customerID);
-//	}
-	
 	/**
 	 * Updating a coupon in the coupon table. All the fields will be updated according to the ID of the coupon object.
 	 * @param coupon- the coupon as a Coupon object to be updated in the DB.
@@ -130,6 +119,11 @@ public class CouponController {
 	 * @throws ApplicationException
 	 */
 	public List<CouponEntity> getCouponByType(CouponType couponType) throws ApplicationException{
+		
+		if (couponType == null) {
+			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
+					+ "   Bad input inserted, null value.");
+		}
 		
 		List<CouponEntity> coupons = couponDao.getCouponByType(couponType);		
 		
@@ -213,6 +207,11 @@ public class CouponController {
 		
 	}
 	
+	/**
+	 * Getting a list of coupon of the newest coupons from the DB.
+	 * @return List collection of the five newest coupons to display on the homepage.
+	 * @throws ApplicationException
+	 */
 	public List<CouponEntity> getNewestCoupon() throws ApplicationException{
 		List<CouponEntity> coupons = couponDao.getNewestCoupon();
 		
@@ -257,11 +256,6 @@ public class CouponController {
 		
 		
 	}
-	
-//	public int getCouponLeftInStockByCouponID(long couponID) throws ApplicationException {
-//		
-//		return this.couponDao.getCouponAmountByCouponID(couponID) - this.couponDao.getBoughtCouponCountByCouponID(couponID);
-//	}
 		
 	/**
 	 * Deleting expired coupon from DB.
@@ -320,6 +314,11 @@ public class CouponController {
 	 * @throws ApplicationException
 	 */
 	private void validateCoupon(CouponEntity coupon) throws ApplicationException {
+		
+		if(coupon == null) {
+			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
+					+ "   Bad input inserted, null value.");
+		}
 		
 		List<InputErrorType> errorTypes = new ArrayList<InputErrorType>();
 		boolean isDateValide = true;

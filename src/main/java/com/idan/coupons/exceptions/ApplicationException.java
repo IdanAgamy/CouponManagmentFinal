@@ -2,8 +2,6 @@ package com.idan.coupons.exceptions;
 
 import java.util.List;
 
-//import java.sql.SQLException;
-
 import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.InputErrorType;
 

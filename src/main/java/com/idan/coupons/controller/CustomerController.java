@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import com.idan.coupons.beans.Customer;
 import com.idan.coupons.beans.CustomerEntity;
 import com.idan.coupons.dao.CustomerDao;
 import com.idan.coupons.enums.ErrorType;
@@ -27,14 +26,12 @@ public class CustomerController {
 	 * @throws ApplicationException
 	 */
 	public void createCustomer(CustomerEntity customer) throws ApplicationException {
-		
+
+		// Validating company parameters for creating customer, including null values.
 		validateCreateCustomer(customer);
 		
 		//If we didn't catch any exception, we call the 'createCoupon' method.
-//		Long customerID = this.customerDao.createCustomer(customer);
 		this.customerDao.createCustomer(customer);
-//		customer.setCustomerId(customerID);
-//		return customer;
 		
 	}
 	
@@ -60,6 +57,7 @@ public class CustomerController {
 	 */
 	public void updateCustomer(CustomerEntity customer) throws ApplicationException {
 		
+		// Validating company parameters for creating customer, including null values.
 		validateUpdateCustomer(customer);
 		
 		//If we didn't catch any exception, we call the 'createCoupon' method.
@@ -186,6 +184,11 @@ public class CustomerController {
 	 * @throws ApplicationException
 	 */
 	private void validateCustomer(CustomerEntity customer) throws ApplicationException {
+		
+		if (customer == null) {
+			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
+					+ "   Bad input inserted, null value.");
+		}
 
 		List<InputErrorType> errorTypes = new ArrayList<InputErrorType>();
 		

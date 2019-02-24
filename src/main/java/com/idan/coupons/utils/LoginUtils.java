@@ -1,6 +1,5 @@
 package com.idan.coupons.utils;
 
-
 import javax.servlet.http.HttpServletRequest;
 
 

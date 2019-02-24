@@ -26,7 +26,6 @@ public class ExceptionsHandler{
 		}
 		if(exception.getType() == ErrorType.SYSTEM_ERROR) {
 			logger.error(error.getErrorMessage(), exception);
-//			exception.printStackTrace();
 		}
 		response.setStatus(exception.getType().getNumber());
 		return error;

@@ -38,7 +38,6 @@ public class CustomerApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/customers
 	public List<CustomerEntity> getAllCustomers() throws ApplicationException {
 		return customerController.getAllCustomers();
 	}
@@ -51,8 +50,7 @@ public class CustomerApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{customerId}", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/customers/2
-	public CustomerEntity getCustomerByCustomerId(HttpServletRequest request, @PathVariable("customerId") long customerId) throws ApplicationException{
+	public CustomerEntity getCustomerByCustomerId(HttpServletRequest request, @PathVariable("customerId") Long customerId) throws ApplicationException{
 		ValidationUtils.ValidateUser(request, customerId);
 		return customerController.getCustomerByCustomerId(customerId);
 	}
@@ -64,7 +62,6 @@ public class CustomerApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/byCustomerName", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/customers/byCustomerName?customerName=patrick
 	public List<CustomerEntity> getCustomerByName(@RequestParam("customerName") String customerName) throws ApplicationException{
 
 		return customerController.getCustomersByCustomerName(customerName);
@@ -77,7 +74,6 @@ public class CustomerApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{customerEmail}/byCustomerEmail", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/customers/Picard@EnterpriseD/byCustomerEmail
 	public CustomerEntity getCustomerByEmail(@PathVariable("customerEmail") String customerEmail) throws ApplicationException{
 		return customerController.getCustomerByCustomerEmail(customerEmail);
 	}
@@ -88,10 +84,10 @@ public class CustomerApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	//http://localhost:8080/CouponManagmentSystemVer3/customers/
 	public CustomerEntity createCustomer(HttpServletRequest request, HttpServletResponse response, @RequestBody CustomerEntity customer) throws ApplicationException{
 		customerController.createCustomer(customer);
 		
+		// After registering the new customer will be logged in.
 		request.getSession();					
 		List<Cookie> loginCookies = CookieUtil.loginCookies(customer);
 		response = CookieUtil.addCookies(response, loginCookies);
@@ -105,10 +101,10 @@ public class CustomerApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(method = RequestMethod.PUT)
-	//http://localhost:8080/CouponManagmentSystemVer3/customers/
 	public void updateUser (HttpServletRequest request,@RequestBody  CustomerEntity customer) throws ApplicationException{
 		// Will update the customer in the DB only if the changes are made by the admin or the same customer.
 		Long customerID = customer.getCustomerId();
+		
 		ValidationUtils.ValidateUser(request, customerID);
 		customerController.updateCustomer(customer);
 	}
@@ -120,31 +116,25 @@ public class CustomerApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{customerId}", method = RequestMethod.DELETE)
-	//http://localhost:8080/CouponManagmentSystemVer3/customers/2
-	public void removeUser(HttpServletRequest request, HttpServletResponse response, @PathVariable("customerId") long customerId) throws ApplicationException{
+	public void removeUser(HttpServletRequest request, HttpServletResponse response, @PathVariable("customerId") Long customerId) throws ApplicationException{
 		// Will update the customer in the DB only if the changes are made by the admin or the same customer.
 		ValidationUtils.ValidateUser(request, customerId);
+		
 		customerController.removeCustomerByCustomerID(customerId);
-		HttpSession session = request.getSession(false);
-		session.invalidate();
-		Cookie[] cookies = request.getCookies();
-		for(Cookie cookie: cookies) {
-		    cookie.setValue("");
-		    cookie.setMaxAge(0);
-		    cookie.setPath("/");
-		    response.addCookie(cookie);
+		
+		// If user is not admin, he will be logged out.
+		String userType = (String) request.getAttribute("request");
+		if (!userType.equals("ADMIN")) {
+			HttpSession session = request.getSession(false);
+			session.invalidate();
+			Cookie[] cookies = request.getCookies();
+			for (Cookie cookie : cookies) {
+				cookie.setValue("");
+				cookie.setMaxAge(0);
+				cookie.setPath("/");
+				response.addCookie(cookie);
+			} 
 		}
 	}
-
-	/* Json object
-	 * DON'T FORGET: add header for JSon!!!!!!!!!!!!!!!!!one!!!!1!
-	 {
-		"customerId": 1,
-			"customerName": "lord ainz",
-			"customerPassword":"asdf1234",
-			"customerEmail":"a@b"
-	}
-	 */
-
 
 }

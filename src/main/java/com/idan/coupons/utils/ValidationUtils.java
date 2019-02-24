@@ -407,15 +407,6 @@ public class ValidationUtils {
 		return c=='.'||c=='_'||c=='-';
 		
 	}
-	
-//	private static boolean isNameProhibitedChar(char c) {
-//		
-//		return c=='!'||c=='#'||c=='$'||c=='%'||c=='&'||c=='\''||c=='*'||c=='+'||c=='/'||
-//				c=='='||c=='?'||c=='^'||c=='`'||c=='{'||c=='|'||c=='}'||c=='~'||
-//				c=='('||c==')'||c==','||c==':'||c==';'||c=='<'||c=='>'||c=='['||c=='\\'||
-//				c==']'||c=='_'||c=='"';
-//		
-//	}
 
 	/**
 	 * This method checks if character is a restricted character.

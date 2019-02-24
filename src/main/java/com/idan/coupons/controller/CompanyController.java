@@ -31,7 +31,7 @@ public class CompanyController {
 	 */
 	public void createCompany(CompanyEntity company) throws ApplicationException {
 
-		// Validating company parameters for creating company.
+		// Validating company parameters for creating company, including null values.
 		validateCreateCompany(company);
 		
 		// If we didn't catch any exception, we call the 'createCoupon' method.
@@ -61,7 +61,7 @@ public class CompanyController {
 	 */
 	public void updateCompany(CompanyEntity company) throws ApplicationException {
 		
-		//Validating company parameters for updating company.
+		//Validating company parameters for updating company, including null values..
 		validateUpdateCompany(company);
 		
 		this.companyDao.updateCompany(company);
@@ -205,6 +205,10 @@ public class CompanyController {
 	 */
 	private void validateCompany(CompanyEntity company) throws ApplicationException {
 		
+		if (company == null) {
+			throw new ApplicationException(ErrorType.BAD_INPUT, DateUtils.getCurrentDateAndTime()
+					+ "   Bad input inserted, null value.");
+		}
 		
 		List<InputErrorType> errorTypes = new ArrayList<InputErrorType>();		
 		

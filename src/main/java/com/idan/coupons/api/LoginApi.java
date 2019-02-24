@@ -35,7 +35,7 @@ public class LoginApi {
 	
 	
 	/**
-	 * logging in to the web site.
+	 * Logging in to the web site.
 	 * @param request - an HttpServletRequest object, for creating session and cookies
 	 * @param response - an HttpServletResponse object, for setting the response to the client.
 	 * @param userLoginInfo - UserLoginInfo object with the login parameters
@@ -45,7 +45,6 @@ public class LoginApi {
 	@RequestMapping(method = RequestMethod.POST)
 	public UserLoginInfo login(HttpServletRequest request, HttpServletResponse response, @RequestBody  UserLoginInfo userLoginInfo) throws ApplicationException {
 		
-		System.out.println(userLoginInfo);
 		if (userLoginInfo != null) {
 			// Validating the admin login.
 			if(userLoginInfo.getUserType() == UserType.ADMIN && userLoginInfo.getName().equals("admin") && userLoginInfo.getPassword().equals("qwer1234") && userLoginInfo.getEmail().equals("admin@coupons")) {
@@ -108,20 +107,5 @@ public class LoginApi {
 			}
 		}
 	}
-	
-	
-
-	
-	
-	/*
-	 * Content-Type      application/json
-{
-"name":"patric",
-			"userType": "CUSTOMER",
-			"password":"aa555456",
-			"email":"a@b"
-	}
-	 */
-	
 
 }

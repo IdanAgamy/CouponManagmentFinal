@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.idan.coupons.beans.Coupon;
 import com.idan.coupons.beans.CouponEntity;
 import com.idan.coupons.controller.CouponController;
 import com.idan.coupons.enums.CouponType;
 import com.idan.coupons.enums.ErrorType;
-//import com.idan.coupons.enums.OrderType;
 import com.idan.coupons.exceptions.ApplicationException;
 import com.idan.coupons.utils.DateUtils;
 import com.idan.coupons.utils.ValidationUtils;
@@ -37,10 +35,8 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons
 	public List<CouponEntity> getAllCoupons() throws ApplicationException {
 		List<CouponEntity> coupons = couponController.getAllCoupons();
-		//System.out.println(coupons);
 		return coupons;
 	}
 
@@ -51,10 +47,7 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{couponId}", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons/5
-	public CouponEntity getCouponByCouponId(@PathVariable("couponId") long couponId) throws ApplicationException {
-		//System.out.println(couponId);
-		//System.out.println(couponController.getCouponByCouponId(couponId));
+	public CouponEntity getCouponByCouponId(@PathVariable("couponId") Long couponId) throws ApplicationException {
 		return couponController.getCouponByCouponId(couponId);
 	}
 
@@ -64,7 +57,6 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons
 	public void createCoupon(@RequestBody CouponEntity coupon) throws ApplicationException {
 				System.out.println(coupon);
 		couponController.createCoupon(coupon);
@@ -77,7 +69,6 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(method = RequestMethod.PUT)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons
 	public void updateCoupon(HttpServletRequest request,@RequestBody CouponEntity coupon) throws ApplicationException {
 		
 		// Will update the company in the DB only if the changes are made by the admin or the same company.
@@ -93,15 +84,14 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{couponId}", method = RequestMethod.DELETE)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons/?
-	public void removeCouponByCouponID(HttpServletRequest request, @PathVariable("couponId") long couponId) throws ApplicationException {
+	public void removeCouponByCouponID(HttpServletRequest request, @PathVariable("couponId") Long couponId) throws ApplicationException {
 		// Will update the company in the DB only if the changes are made by the admin or the same company.
 		CouponEntity coupon = couponController.getCouponByCouponId(couponId);
 		ValidationUtils.ValidateUser(request, coupon.getCompanyID());
 		
 		couponController.removeCouponByCouponID(couponId);
 	}
-//TODO change buy to purchases
+
 	/**
 	 * Adding a coupon-customer relation after customer bought a coupon.
 	 * @param request - an HttpServletRequest object, for retrieving the customer data.
@@ -109,7 +99,6 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{couponId}/buyCoupon", method = RequestMethod.POST)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons/3/buyCoupon
 	public Long buyCoupon(HttpServletRequest request, @PathVariable("couponId") Long couponID) throws ApplicationException{
 
 		String customerIDStr = (String) request.getAttribute("userID");
@@ -123,15 +112,14 @@ public class CouponApi {
 					+" problem with cookies.");
 		}
 	}
-//TODO- change to cencelations
+
 	/**
-	 * Removing a coupon-customer relation after customer cancelled a purchase.
+	 * Canceling a purchase.
 	 * @param request - an HttpServletRequest object, for retrieving the customer data.
 	 * @param couponID - Long parameter of the coupon ID.
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/{couponId}/removeBoughtCoupon", method = RequestMethod.DELETE)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons/3/removeBoughtCoupon
 	public void removeBoughtCoupon(HttpServletRequest request, @PathVariable("couponId") Long couponID) throws ApplicationException {
 
 		String customerIDStr = (String) request.getAttribute("userID");
@@ -143,8 +131,6 @@ public class CouponApi {
 			throw new ApplicationException(ErrorType.COOKIES_LOST, DateUtils.getCurrentDateAndTime()
 					+" problem with cookies.");
 		}
-		
-//		couponController.removeBoughtCouponByCouponIDandCustomerID(couponID, 2L);
 	}
 
 	/**
@@ -154,9 +140,7 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/byCouponType", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons/byCouponType?couponType=Food
 	public List<CouponEntity> getCouponByType(@RequestParam("couponType") CouponType couponType) throws ApplicationException{
-		//System.out.println(couponController.getCouponByType(couponType));
 		return couponController.getCouponByType(couponType);
 	}
 	
@@ -167,9 +151,7 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/upToPrice", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons/upToPrice?price=200
-	public List<CouponEntity> getCouponsUpToPrice(@RequestParam("price") double price) throws ApplicationException{
-		//		System.out.println(couponController.getCouponsUpToPrice(price));
+	public List<CouponEntity> getCouponsUpToPrice(@RequestParam("price") Double price) throws ApplicationException{
 		return couponController.getCouponsUpToPrice(price);
 	}
 
@@ -180,9 +162,7 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/upToEndDate", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons/upToEndDate?endDate=2019-12-12
 	public List<CouponEntity> getCouponsUpToEndDate(@RequestParam("endDate") String endDate) throws ApplicationException{
-		//		System.out.println(couponController.getCouponsUpToEndDate(endDate));
 		return couponController.getCouponsUpToEndDate(endDate);
 	}
 
@@ -193,9 +173,7 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/byCompanyID", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons/byCompanyID?companyID=4
 	public List<CouponEntity> getCouponsByCompanyID(@RequestParam("companyID") Long companyID) throws ApplicationException{
-		//		System.out.println(couponController.getCouponsByCompanyID(companyID));
 		return couponController.getCouponsByCompanyID(companyID);
 	}
 
@@ -206,7 +184,6 @@ public class CouponApi {
 	 * @throws ApplicationException
 	 */
 	@RequestMapping(value ="/purchasedCoupons", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons/purchasedCoupons
 	public List<CouponEntity> getCouponsByCustomerID(HttpServletRequest request) throws ApplicationException{
 
 		String customerIDStr = (String) request.getAttribute("userID");
@@ -221,31 +198,8 @@ public class CouponApi {
 	}
 	
 	@RequestMapping(value ="/newest", method = RequestMethod.GET)
-	//http://localhost:8080/CouponManagmentSystemVer3/coupons/newest
 	public List<CouponEntity> getNewestCoupon() throws ApplicationException{
 		List<CouponEntity> coupons = couponController.getNewestCoupon();
-		//System.out.println(coupons);
 		return coupons;
 	}
-
-
-
-	/*
-	 * Content-Type      application/json
-	 *  Json object
-	 {
-		"couponId": ?,
-		"couponTitle": "a",
-		"couponStartDate": "2000-10-10",
-		"couponEndDate": "2000-10-11",
-		"couponAmount": 2,
-		"couponType": "Food",
-		"couponMessage": "a",
-		"couponPrice": 2.2,
-		"couponImage": "a",
-		"companyID": 4
-	}
-	 */
-
-
 }

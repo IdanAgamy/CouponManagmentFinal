@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
-//import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.idan.coupons.beans.CompanyEntity;
 import com.idan.coupons.beans.CustomerEntity;
-//import com.idan.coupons.enums.ErrorType;
 import com.idan.coupons.enums.UserType;
-//import com.idan.coupons.exceptions.ApplicationException;
 
 public class CookieUtil {
 
@@ -49,6 +46,10 @@ public class CookieUtil {
 		return loginCookies;
 	}
 	
+	/**
+	 * Creates the cookies for admin login.
+	 * @return - List of cookies with the customer parameters.
+	 */
 	public static List<Cookie> loginCookies() {
 
 		List<Cookie> loginCookies = new ArrayList<Cookie>();

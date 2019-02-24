@@ -1,7 +1,5 @@
 package com.idan.coupons.beans;
 
-
-
 import com.idan.coupons.enums.UserType;
 
 public class UserLoginInfo {
